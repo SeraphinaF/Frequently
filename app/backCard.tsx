@@ -4,9 +4,31 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/src/styles/colors';
 import ProgressBar from '@/components/ui/ProgressBar';
 import SoundIcon from '@/components/ui/SoundIcon'
+import { db } from '@/FirebaseConfig'; 
+import { useEffect, useState } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
 
 
 export default function BackCard() {
+    const [spanishWord, setSpanishWord] = useState('');
+    const [spanishExample , setSpanishExample ] = useState('')
+    const [translationExample , setTranslationExample ] = useState('')
+    const [wordType, setWordType ] = useState('')
+  
+    useEffect(() => {
+      const fetchCards = async () => {
+        const querySnapshot = await getDocs(collection(db, 'cards'));
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          setSpanishWord(data.spanishWord); 
+          setSpanishExample(data.spanishExample)
+          setTranslationExample(data.translationExample)
+          setWordType(data.wordType)
+        });
+      };
+  
+      fetchCards();
+    }, []);
   return (
     <BaseLayout>
       <View style={styles.container}>
@@ -16,10 +38,10 @@ export default function BackCard() {
           <View style={styles.soundIcon}>
             <SoundIcon  style={styles.soundIcon} />
           </View>
-          <Text style={styles.word}>el Perro</Text>
-          <Text style={styles.type}>Zelfstandig naamwoord</Text>
-          <Text style={styles.exampleForeign}>El perro corre rápidamente en el parque.</Text>
-          <Text style={styles.exampleNative}>De hond rent snel in het park</Text>
+          <Text style={styles.word}>{spanishWord}</Text>
+          <Text style={styles.type}>{wordType}</Text>
+          <Text style={styles.exampleForeign}>{spanishExample}</Text>
+          <Text style={styles.exampleNative}>{translationExample}</Text>
         </SafeAreaView>
       </View>
     </BaseLayout>

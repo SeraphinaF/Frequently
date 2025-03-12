@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, Text } from 'react-native';
 import { colors } from '@/src/styles/colors';
+import { Link } from 'expo-router';
 
 interface ProgressBarProps {
     totalCards: number;
@@ -19,7 +20,7 @@ export default function ProgressBar({ totalCards, remainingCards }: ProgressBarP
                     </View>
                 </View>
                 <View style={styles.closeBtn}>
-                    <Text>X</Text>
+                    <Text><Link href='/homeScreen'>X</Link></Text>
                 </View>
             </View>
         </SafeAreaView>

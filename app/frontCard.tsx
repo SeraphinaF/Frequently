@@ -1,22 +1,40 @@
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState, useEffect } from 'react';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { SafeAreaView, Text, TouchableOpacity, TextInput, View, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { colors } from '../src/styles/colors'
+import { colors } from '../src/styles/colors';
 import { BaseLayout } from '../components/ui/BaseLayout';
 import { buttonStyles } from '../src/styles/buttons';
 import ProgressBar from '@/components/ui/ProgressBar';
+import { Link } from 'expo-router';
+import { db } from '@/FirebaseConfig'; 
+
 
 export default function FrontCard() {
+  const [dutchWord, setDutchWord] = useState('');
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      const querySnapshot = await getDocs(collection(db, 'cards'));
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        setDutchWord(data.dutchWord); 
+      });
+    };
+    
+    fetchCards();
+  }, []);
+
   return (
     <BaseLayout>
       <View style={styles.container}>
-        <ProgressBar totalCards={0} remainingCards={0}/>
+        <ProgressBar totalCards={0} remainingCards={0} />
         <SafeAreaView style={styles.content}>
-          <Text style={styles.word}>de hond</Text>
-          <TextInput style={styles.input}></TextInput>
-        <TouchableOpacity style={[buttonStyles.buttonPrimary]}>
-        <Text style={[buttonStyles.textPrimary]}>Laat zien</Text>
-        </TouchableOpacity>
+          <Text style={styles.word}>{dutchWord}</Text> 
+          <TextInput style={styles.input} placeholder="Vul de spaanse vertaling in" />
+          <TouchableOpacity style={[buttonStyles.buttonPrimary]}>
+            <Text style={buttonStyles.textPrimary}><Link href='/backCard'>Laat zien</Link></Text>
+          </TouchableOpacity>
         </SafeAreaView>
         <StatusBar style="light" />
       </View>
@@ -26,18 +44,14 @@ export default function FrontCard() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-  },
-  linearGradient: {
-    ...StyleSheet.absoluteFillObject, 
-    flex: 1, 
+    flex: 1,
   },
   content: {
-    flex: 1, 
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  word:{
+  word: {
     color: colors.white,
     fontSize: 48,
   },
