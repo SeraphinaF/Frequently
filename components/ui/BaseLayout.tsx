@@ -9,7 +9,7 @@ interface BaseLayoutProps {
 export function BaseLayout({ children }: BaseLayoutProps) {
   return (
     <LinearGradient
-      colors={['#4B0CD3', '#25127A', '#120A5B']}
+      colors={['#5014D1', '#1D0C6B', '#0B053A']}
       style={styles.gradient}
     >
       <View style={styles.container}>

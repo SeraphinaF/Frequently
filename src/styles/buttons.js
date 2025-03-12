@@ -7,6 +7,7 @@ export const buttonStyles = StyleSheet.create({
     paddingHorizontal: 54,
     borderRadius: 15,
   },
+
   textPrimary: {
     color: '#fff',
     fontSize: 24,

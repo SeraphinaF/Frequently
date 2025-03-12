@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { SafeAreaView, Text, TouchableOpacity, TextInput, View, StyleSheet, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { colors } from '../src/styles/colors';
 import { BaseLayout } from '../components/ui/BaseLayout';
 import { buttonStyles } from '../src/styles/buttons';
 import ProgressBar from '@/components/ui/ProgressBar';
-import { Link } from 'expo-router';
 import { db } from '@/FirebaseConfig'; 
-
+import { useNavigation } from '@react-navigation/native';
 
 export default function FrontCard() {
+  const navigation = useNavigation()
   const [dutchWord, setDutchWord] = useState('');
 
   useEffect(() => {
@@ -32,8 +32,8 @@ export default function FrontCard() {
         <SafeAreaView style={styles.content}>
           <Text style={styles.word}>{dutchWord}</Text> 
           <TextInput style={styles.input} placeholder="Vul de spaanse vertaling in" />
-          <TouchableOpacity style={[buttonStyles.buttonPrimary]}>
-            <Text style={buttonStyles.textPrimary}><Link href='/backCard'>Laat zien</Link></Text>
+          <TouchableOpacity onPress={() => navigation.navigate("backCard")} style={[buttonStyles.buttonPrimary]}>
+            <Text style={buttonStyles.textPrimary}>Laat zien</Text>
           </TouchableOpacity>
         </SafeAreaView>
         <StatusBar style="light" />

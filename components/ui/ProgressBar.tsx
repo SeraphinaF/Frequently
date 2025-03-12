@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, Text } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import { colors } from '@/src/styles/colors';
-import { Link } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 
 interface ProgressBarProps {
     totalCards: number;
@@ -9,6 +9,7 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ totalCards, remainingCards }: ProgressBarProps) {
+    const navigation = useNavigation()
     const progress = (totalCards - remainingCards) / totalCards;
 
     return (
@@ -19,9 +20,9 @@ export default function ProgressBar({ totalCards, remainingCards }: ProgressBarP
                         <View style={styles.progressBar} />
                     </View>
                 </View>
-                <View style={styles.closeBtn}>
-                    <Text><Link href='/homeScreen'>X</Link></Text>
-                </View>
+                <TouchableOpacity onPress={() => navigation.navigate("homeScreen")} style={styles.closeBtn}>
+                    <Text>X</Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     );

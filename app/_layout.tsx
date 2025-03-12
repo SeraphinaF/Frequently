@@ -32,6 +32,9 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>  {/* 🔹 Add this line */}
         <Stack.Screen name="index" />
         <Stack.Screen name="register" />
+        <Stack.Screen name="frontCard" />
+        <Stack.Screen name="backCard" />
+        <Stack.Screen name="homeScreen" />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
