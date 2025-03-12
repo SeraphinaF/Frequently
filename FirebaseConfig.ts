@@ -8,13 +8,14 @@ import { CACHE_SIZE_UNLIMITED, getFirestore, initializeFirestore } from "firebas
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC6Id9pgoRdd3MokAT3NsLh-Z0EvnYp8R4",
-  authDomain: "frequently-62242.firebaseapp.com",
-  projectId: "frequently-62242",
-  storageBucket: "frequently-62242.firebasestorage.app",
-  messagingSenderId: "1034317450434",
-  appId: "1:1034317450434:web:ea9792860f741654487f5b"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
 };
+
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
