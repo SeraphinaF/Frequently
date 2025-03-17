@@ -1,39 +1,17 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, StyleSheet, View, FlatList, Text, TouchableOpacity, SafeAreaView } from "react-native";
-import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
 import { useFocusEffect } from "@react-navigation/native";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import * as SQLite from "expo-sqlite";
 import { db } from '@/FirebaseConfig';
 import { router } from "expo-router";
-import { colors } from "@/src/styles/colors";
 import { buttonStyles } from "@/src/styles/buttons";
 import { BaseLayout } from "@/components/ui/BaseLayout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { doc, getDoc } from "firebase/firestore";
+import { setupGeofence } from "@/components/geofencing"; // ✅ Import the geofencing function
 
 type TaskType = { id: number; task: string };
-
-const GEOFENCE_TASK = "GEOFENCE_TASK";
-
-TaskManager.defineTask(GEOFENCE_TASK, ({ data, error }) => {
-  if (error) {
-    console.error("Geofencing error:", error);
-    return;
-  }
-  if (data) {
-    const { eventType, region } = data;
-    if (eventType === Location.GeofencingEventType.Enter) {
-      console.log(`Entered geofence: ${region.identifier}`);
-      if (region.identifier === "Home") {
-        Alert.alert("Welcome Home", "You have arrived home!");
-      }
-    } else if (eventType === Location.GeofencingEventType.Exit) {
-      console.log(`Exited geofence: ${region.identifier}`);
-    }
-  }
-});
 
 export default function HomeScreen() {
   const auth = getAuth();
@@ -45,15 +23,15 @@ export default function HomeScreen() {
   useEffect(() => {
     const getUser = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        setUserId(user.uid)
-        await AsyncStorage.setItem("userId", user.uid)
+        setUserId(user.uid);
+        await AsyncStorage.setItem("userId", user.uid);
       }
     });
     return () => getUser(); 
   }, []);
 
   useEffect(() => {
-    if (!userId) return; 
+    if (!userId) return;
 
     const fetchUserName = async () => {
       try {
@@ -62,7 +40,7 @@ export default function HomeScreen() {
 
         if (userDocSnap.exists()) {
           setUserName(userDocSnap.data().name);
-          await AsyncStorage.setItem('userName', userName)
+          await AsyncStorage.setItem('userName', userName);
         } else {
           console.log("User not found");
         }
@@ -72,8 +50,7 @@ export default function HomeScreen() {
     };
 
     fetchUserName();
-  }, [userId]); 
-
+  }, [userId]);
 
   const loadData = async () => {
     try {
@@ -93,32 +70,13 @@ export default function HomeScreen() {
     }
   };
 
-  const setupGeofence = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permission Denied", "Geofencing requires location access.");
-      return;
-    }
-
-    const geofenceRegions = [
-      {
-        identifier: 'Home',
-        latitude: 51.919854,
-        longitude: 4.511214,
-        radius: 200,
-        notifyOnEnter: true,
-        notifyOnExit: true,
-      },
-    ];
-
-    await Location.startGeofencingAsync(GEOFENCE_TASK, geofenceRegions);
-    console.log("Geofencing started!");
-  };
+  useEffect(() => {
+    setupGeofence(); // ✅ Start geofencing when the home screen loads
+  }, []);
 
   useFocusEffect(
-    useCallback(() => {
+    React.useCallback(() => {
       loadData();
-      setupGeofence();
     }, [])
   );
 
@@ -129,7 +87,7 @@ export default function HomeScreen() {
           <Text style={styles.logoutText}>Sign out</Text>
         </TouchableOpacity>
         <Text style={styles.welcomeText}>Welcome back, {userName}!</Text>
-        <Text style={styles.title}>Here is your our Todo List</Text>
+        <Text style={styles.title}>Here is your Todo List</Text>
         <FlatList
           data={tasks}
           keyExtractor={(item) => item.id.toString()}
@@ -168,11 +126,11 @@ const styles = StyleSheet.create({
     fontWeight: "200",
     marginTop: 50,
     marginBottom: 8,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   title: {
     color: "#3498db",
-    fontSize: 40,
+    fontSize: 48,
     fontWeight: "medium",
     marginBottom: 24,
   },
@@ -184,7 +142,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#ffffff",
     borderRadius: 10,
-    marginBottom: 8
+    marginBottom: 8,
   },
   taskText: {
     fontSize: 18,
@@ -202,4 +160,3 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
 });
-
