@@ -9,9 +9,9 @@ import { buttonStyles } from "@/src/styles/buttons";
 import { BaseLayout } from "@/components/ui/BaseLayout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { doc, getDoc } from "firebase/firestore";
-import { setupGeofence } from "@/components/geofencing"; // ✅ Import the geofencing function
+import Geofencing from "./geofencing";
 
-type TaskType = { id: number; task: string };
+type TaskType = { id: number; task: string }
 
 export default function HomeScreen() {
   const auth = getAuth();
@@ -19,6 +19,7 @@ export default function HomeScreen() {
   const [userId, setUserId] = useState('');
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const sqliteDb = SQLite.useSQLiteContext();
+  const [geofenceMessage, setGeofenceMessage] = useState("Checking location...");
 
   useEffect(() => {
     const getUser = onAuthStateChanged(auth, async (user) => {
@@ -70,10 +71,6 @@ export default function HomeScreen() {
     }
   };
 
-  useEffect(() => {
-    setupGeofence(); // ✅ Start geofencing when the home screen loads
-  }, []);
-
   useFocusEffect(
     React.useCallback(() => {
       loadData();
@@ -86,6 +83,8 @@ export default function HomeScreen() {
         <TouchableOpacity onPress={() => auth.signOut()}>
           <Text style={styles.logoutText}>Sign out</Text>
         </TouchableOpacity>
+        <Text style={styles.message}>{geofenceMessage}</Text>
+      <Geofencing onGeofenceCheck={setGeofenceMessage} />
         <Text style={styles.welcomeText}>Welcome back, {userName}!</Text>
         <Text style={styles.title}>Here is your Todo List</Text>
         <FlatList
@@ -115,6 +114,13 @@ const styles = StyleSheet.create({
     right: 15,
     top: 20,
     fontSize: 16,
+  },
+  message: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 32,
   },
   container: {
     flex: 1,

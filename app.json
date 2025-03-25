@@ -1,59 +1,77 @@
 {
   "expo": {
-    "name": "Frequently",
-    "slug": "Frequently",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Frequently",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to enable geofencing.",
-        "NSLocationAlwaysUsageDescription": "This app requires access to your location even when running in the background to monitor geofencing events.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs background location access to detect when you enter or exit a geofenced region."
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "remote-notification",
+          "location",
+          "fetch",
+          "remote-notification"
+        ],
+        "NSLocationWhenInUseUsageDescription": "This app requires access to your location when open.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app requires access to your location even when closed.",
+        "NSLocationAlwaysUsageDescription": "This app requires access to your location when open.",
+        "deploymentTarget": "15.2",
+        "usesAppleSignIn": true
       },
-      "package": "com.anonymous.Frequently"
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "bundleIdentifier": "com.seraphina01.frequently"
     },
     "plugins": [
-      "expo-router",
+      "expo-localization",
+      "expo-background-fetch",
       [
-        "expo-splash-screen",
+        "expo-build-properties",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "android": {
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33,
+            "buildToolsVersion": "33.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
         }
       ],
-      "expo-sqlite"
+      [
+        "expo-task-manager",
+        {
+          "ios": {
+            "minimumOSVersion": "14"
+          }
+        }
+      ],
+      [
+        "expo-background-fetch",
+        {
+          "ios": {
+            "minimumOSVersion": "14"
+          }
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Frequently to use your location.",
+          "locationAlwaysPermission": "Allow Frequently to use your location.",
+          "locationWhenInUsePermission": "Allow Frequently to use your location.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
     ],
-    "experiments": {
-      "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "03d73434-c0da-4215-8743-baab3a6a7152"
-      }
-    },
-    "owner": "seraphina01"
+    "android": {
+      "permissions": [
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.WAKE_LOCK",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
+      ],
+      "package": "com.seraphina01.frequently"
+    }
   }
 }

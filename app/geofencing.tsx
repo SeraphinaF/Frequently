@@ -1,91 +1,62 @@
-import React, { useCallback, useState } from 'react';
-import { Alert, StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
-import * as Location from 'expo-location';
-import * as TaskManager from 'expo-task-manager';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useEffect } from "react";
+import * as Location from "expo-location";
 
-const GEOFENCE_TASK = 'GEOFENCE_TASK';
-
-TaskManager.defineTask(GEOFENCE_TASK, ({ data, error }) => {
-  if (error) {
-    console.error('Geofencing error:', error);
-    return;
-  }
-  if (data) {
-    const { eventType, region } = data;
-    if (eventType === Location.GeofencingEventType.Enter) {
-      console.log(`Entered geofence: ${region.identifier}`);
-      Alert.alert('Geofence Alert', `You entered ${region.identifier}`);
-    } else if (eventType === Location.GeofencingEventType.Exit) {
-      console.log(`Exited geofence: ${region.identifier}`);
-    }
-  }
-});
-
-export default function GeofencingComponent() {
-  const [hasPermission, setHasPermission] = useState(false);
-
-  const requestPermissions = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Geofencing requires location access.');
-      return false;
-    }
-    return true;
+export default function Geofencing({ onGeofenceCheck }) {
+  const GEOFENCE_REGION = {
+    latitude:  51.91728965933152,
+    longitude: 4.484664933067359,
+    radius: 100, // in meters
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const setupGeofence = async () => {
-        const permission = await requestPermissions();
-        setHasPermission(permission);
-        if (!permission) return;
+  useEffect(() => {
+    checkLocationOnce();
+  }, []);
 
-        const geofenceRegions = [
-          {
-            identifier: 'Home',
-            latitude: 51.919854, 
-            longitude: 4.511214,
-            radius: 100, 
-            notifyOnEnter: true,
-            notifyOnExit: true,
-          },
-        ];
+  const checkLocationOnce = async () => {
+    const { granted } = await Location.requestForegroundPermissionsAsync();
+    if (!granted) {
+      onGeofenceCheck("Toegang geweigerd: Locatie is nodig om te bepalen of je op school bent.");
+      return;
+    }
 
-        await Location.startGeofencingAsync(GEOFENCE_TASK, geofenceRegions);
-        console.log('Geofencing started!');
-      };
+    let location = await Location.getCurrentPositionAsync({});
+    const { latitude, longitude } = location.coords;
 
-      setupGeofence();
-    }, [])
-  );
+    console.log("Current Location:", latitude, longitude);
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Geofencing Example</Text>
-      {hasPermission ? (
-        <Text style={styles.status}>Geofencing is active.</Text>
-      ) : (
-        <Text style={styles.status}>Location permission is required.</Text>
-      )}
-    </SafeAreaView>
-  );
+    if (isWithinGeofence(latitude, longitude)) {
+      console.log("User is within geofence.");
+      onGeofenceCheck("Je bent op school. Aan de slag!");
+    } else {
+      console.log("User is outside geofence.");
+      onGeofenceCheck("Je bent niet op school. Tijd om even te ontspannen?");
+    }
+  };
+
+  const isWithinGeofence = (lat, lon) => {
+    const distance = getDistanceFromLatLonInMeters(
+      lat,
+      lon,
+      GEOFENCE_REGION.latitude,
+      GEOFENCE_REGION.longitude
+    );
+    console.log("Distance to geofence:", distance);
+    return distance <= GEOFENCE_REGION.radius;
+  };
+
+  function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  return null;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  status: {
-    fontSize: 16,
-    color: 'gray',
-  },
-});
