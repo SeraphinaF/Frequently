@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
 import * as Location from "expo-location";
+import { Alert } from "react-native";
 
 export default function Geofencing({ onGeofenceCheck }) {
   const GEOFENCE_REGION = {
     latitude:  51.91728965933152,
     longitude: 4.484664933067359,
-    radius: 100, // in meters
+    radius: 100, 
   };
 
   useEffect(() => {
@@ -26,10 +27,12 @@ export default function Geofencing({ onGeofenceCheck }) {
 
     if (isWithinGeofence(latitude, longitude)) {
       console.log("User is within geofence.");
-      onGeofenceCheck("Je bent op school. Aan de slag!");
+      onGeofenceCheck()
+      Alert.alert("Je bent op school. Aan de slag!");
     } else {
       console.log("User is outside geofence.");
-      onGeofenceCheck("Je bent niet op school. Tijd om even te ontspannen?");
+      onGeofenceCheck()
+      Alert.alert("Je bent niet op school. Tijd om even te ontspannen?");
     }
   };
 
@@ -40,7 +43,6 @@ export default function Geofencing({ onGeofenceCheck }) {
       GEOFENCE_REGION.latitude,
       GEOFENCE_REGION.longitude
     );
-    console.log("Distance to geofence:", distance);
     return distance <= GEOFENCE_REGION.radius;
   };
 

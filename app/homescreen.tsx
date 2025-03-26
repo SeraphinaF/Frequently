@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, StyleSheet, View, FlatList, Text, TouchableOpacity, SafeAreaView } from "react-native";
+import { StyleSheet, View, FlatList, Text, TouchableOpacity, SafeAreaView } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import * as SQLite from "expo-sqlite";
@@ -13,7 +13,7 @@ import Geofencing from "./geofencing";
 
 type TaskType = { id: number; task: string }
 
-export default function HomeScreen() {
+export default function HomeScreen(props: { onStateChange: (arg0: string, arg1: null) => void; }) {
   const auth = getAuth();
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState('');
@@ -28,7 +28,7 @@ export default function HomeScreen() {
         await AsyncStorage.setItem("userId", user.uid);
       }
     });
-    return () => getUser(); 
+    return () => getUser();
   }, []);
 
   useEffect(() => {
@@ -80,11 +80,20 @@ export default function HomeScreen() {
   return (
     <BaseLayout>
       <SafeAreaView style={styles.container}>
-        <TouchableOpacity onPress={() => auth.signOut()}>
+        <TouchableOpacity onPress={async () => {
+          try {
+            await auth.signOut();
+            console.log("User signed out successfully");
+            window.location.reload(); // Reload the page
+          } catch (error) {
+            console.error("Sign out error:", error);
+          }
+        }}
+        >
           <Text style={styles.logoutText}>Sign out</Text>
         </TouchableOpacity>
         <Text style={styles.message}>{geofenceMessage}</Text>
-      <Geofencing onGeofenceCheck={setGeofenceMessage} />
+        <Geofencing onGeofenceCheck={setGeofenceMessage} />
         <Text style={styles.welcomeText}>Welcome back, {userName}!</Text>
         <Text style={styles.title}>Here is your Todo List</Text>
         <FlatList
