@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     height: 56,
     padding: 10,
     borderRadius: 15,
-    backgroundColor: colors.tertiary,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     marginTop: 16,
   },
   button: {

@@ -1,16 +1,18 @@
-import { BaseLayout } from '@/components/ui/BaseLayout';
+import BaseLayout from '@/components/ui/BaseLayout';
 import { useNavigation } from "@react-navigation/native";
 import { db } from '@/FirebaseConfig';
-import { getAuth, onAuthStateChanged } from '@firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
-import { doc, getDoc} from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { colors } from '@/src/styles/colors';
-import { buttonStyles } from '@/src/styles/buttons';
+import { buttonStyles } from '@/src/styles/buttons'
 
-export default function HomeScreen(){
+  ;
+
+export default function HomeScreen() {
   const navigation = useNavigation();
   const auth = getAuth();
   const [userName, setUserName] = useState('')
@@ -23,11 +25,11 @@ export default function HomeScreen(){
         await AsyncStorage.setItem("userId", user.uid)
       }
     });
-    return () => getUser(); 
+    return () => getUser();
   }, []);
 
   useEffect(() => {
-    if (!userId) return; 
+    if (!userId) return;
 
     const fetchUserName = async () => {
       try {
@@ -46,46 +48,77 @@ export default function HomeScreen(){
     };
 
     fetchUserName();
-  }, [userId]); 
+  }, [userId]);
 
   return (
     <BaseLayout>
-        <SafeAreaView>
-        <TouchableOpacity onPress={() => auth.signOut()}>
-          <Text style={styles.logoutText}>Uitloggen</Text>
-        </TouchableOpacity>
-        <View style={styles.container}>
-        <Text style={styles.welcomText}>Welkom {userName}!</Text>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.logoutWrapper}>
+          <TouchableOpacity onPress={() => auth.signOut()}>
+            <Text style={styles.logoutText}>Uitloggen</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity 
-        onPress={() => navigation.navigate("frontCard")} 
-        style={[styles.button, buttonStyles.buttonPrimary]}
+
+        <View style={styles.content}>
+          <Text style={styles.welcomText}>Welkom {userName}!</Text>
+        </View>
+        <View style={styles.content}>
+          <Text style={styles.statsText}>
+            <Text style={styles.statsNumber}>20</Text> Nieuwe woorden
+          </Text>
+          <Text style={styles.statsText}>
+            <Text style={styles.statsNumber}>10</Text> Woorden herhalen
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("flashCard")}
+          style={[styles.button, buttonStyles.buttonPrimary]}
         >
-      <Text style={buttonStyles.textPrimary}>Start</Text>
-    </TouchableOpacity>
-        </SafeAreaView>
+          <Text style={buttonStyles.textPrimary}>Start</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
     </BaseLayout>
+
   )
 }
 
 const styles = StyleSheet.create({
-logoutText:{
+  safeArea: {
+    flex: 1,
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  logoutWrapper: {
+    alignItems: 'flex-end',
+  },
+  logoutText: {
     color: colors.white,
-    position: 'absolute',
-    right: 0
-},
-container:{
-    // flex:1,
-    // justifyContent: 'center',
-    // alignItems:'center'
-},
- welcomText:{
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    color: colors.white,
+  },
+  welcomText: {
     color: colors.white,
     fontSize: 32,
     marginTop: 56,
- },
- button:{
-  marginTop: 160
- }
-})
+    textAlign: 'center',
+  },
+  statsText: {
+    color: colors.white,
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 8,
+    fontWeight: '300',
+  },
+  statsNumber: {
+    fontWeight: '700',
+    color: colors.white,
+  },  
+  button: {
+    marginBottom: 16,
+  },
+});
+
 

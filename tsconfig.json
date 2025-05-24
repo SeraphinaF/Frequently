@@ -4,15 +4,14 @@
     "strict": true,
     "paths": {
       "@firebase/auth": ["./node_modules/@firebase/auth/dist/index.rn.d.ts"],
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+    "expo-env.d.ts",
+    "components/import.js"
+, "app/flashCard.tsx", "app/frontCard.tsx", "app/homeScreen.tsx", "app/backCard.tsx", "app/index.tsx", "app/register.tsx", "app/_layout.tsx", "components/ui/popupMessage.jsx"  ]
 }

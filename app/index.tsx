@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-nativ
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
-import { BaseLayout } from '@/components/ui/BaseLayout';
+import  BaseLayout  from '@/components/ui/BaseLayout';
 import { buttonStyles } from '@/src/styles/buttons';
 import { colors } from '@/src/styles/colors';
 
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     height: 56,
     padding: 10,
     borderRadius: 15,
-    backgroundColor: colors.tertiary,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     marginTop: 16,
   },
   button: {

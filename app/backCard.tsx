@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
-import { BaseLayout } from '@/components/ui/BaseLayout';
+import  BaseLayout  from '@/components/ui/BaseLayout';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/src/styles/colors';
 import ProgressBar from '@/components/ui/ProgressBar';
@@ -12,20 +12,21 @@ import { collection, getDocs } from 'firebase/firestore';
 export default function BackCard() {
   const [spanishWord, setSpanishWord] = useState('');
   const [spanishExample, setSpanishExample] = useState('')
-  const [translationExample, setTranslationExample] = useState('')
-  const [wordType, setWordType] = useState('')
+  const [dutchExample, setDutchExample] = useState('')
+  const [image, setImage] = useState('')
 
   useEffect(() => {
     const fetchCards = async () => {
       const querySnapshot = await getDocs(collection(db, 'cards'));
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        setSpanishWord(data.spanishWord);
-        setSpanishExample(data.spanishExample)
-        setTranslationExample(data.translationExample)
-        setWordType(data.wordType)
+        setSpanishWord(data.spanish_word);
+        setSpanishExample(data.spanish_example)
+        setDutchExample(data.dutch_example)
+        setImage(data.image_url)
       });
     };
+    console.log(image)
 
     fetchCards();
   }, []);
@@ -34,16 +35,13 @@ export default function BackCard() {
       <View style={styles.container}>
         <ProgressBar totalCards={0} remainingCards={0} />
         <SafeAreaView style={styles.content}>
-          <Image source={require('@/assets/images/dog-ai.png')} style={[{ width: 350, height: 350 }, styles.image]} />
+          <Image source={{uri: image}} style={[{ width: 350, height: 350 }, styles.image]} />
           <View style={styles.wordContainer}>
-            <View>
+              <Text style={styles.word}>{spanishWord}</Text>
               <SoundIcon style={styles.soundIcon} />
-            </View>
-            <Text style={styles.word}>{spanishWord}</Text>
           </View>
-          <Text style={styles.type}>{wordType}</Text>
           <Text style={styles.exampleForeign}>{spanishExample}</Text>
-          <Text style={styles.exampleNative}>{translationExample}</Text>
+          <Text style={styles.exampleNative}>{dutchExample}</Text>
           <View style={styles.feedbackButtons}>
             <TouchableOpacity><Text style={styles.buttonWrong}>Fout</Text></TouchableOpacity>
             <TouchableOpacity><Text style={styles.buttonDifficult}>Moeilijk</Text></TouchableOpacity>
@@ -66,35 +64,33 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   soundIcon: {
-    backgroundColor: colors.white,
-    padding: 4,
-    margin:2,
-    borderRadius: 5
+    borderRadius: 5,
+    margin: 10
   },
   wordContainer:{
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignContent:'center',
+    alignItems: 'center',
+    margin: 16
   },
   word: {
-    color: colors.white,
+    color: colors.secondary,
     fontSize: 48,
-  },
-  type: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: 100,
-    marginBottom: 32,
   },
   exampleForeign: {
     color: colors.white,
     fontSize: 20,
+    fontWeight: 300,
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 24,
   },
   exampleNative: {
     color: colors.white,
-    fontWeight: 200,
     fontSize: 20,
-    textAlign: 'center'
+    fontWeight: 100,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    marginBottom: 32,
   },
   feedbackButtons:{
     flexDirection: 'row',
@@ -104,21 +100,21 @@ const styles = StyleSheet.create({
   },
   buttonWrong:{
     color: '#CE3030',
-    backgroundColor: colors.tertiary,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 15
   },
   buttonDifficult:{
     color: '#FE7A0F',
-    backgroundColor: colors.tertiary,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 15
   },
   buttonEasy:{
     color: '#3E973B',
-    backgroundColor: colors.tertiary,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 15

@@ -1,26 +1,26 @@
 import React, { ReactNode } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, StyleSheet, ImageBackground } from 'react-native';
 
 interface BaseLayoutProps {
-  children: ReactNode;      
+  children: ReactNode;
 }
 
-export function BaseLayout({ children }: BaseLayoutProps) {
+export default function BaseLayout({ children }: BaseLayoutProps) {
   return (
-    <LinearGradient
-      colors={['#5014D1', '#1D0C6B', '#0B053A']}
-      style={styles.gradient}
+    <ImageBackground
+      source={require('@/assets/images/background-doodle.png')}
+      style={styles.background}
+      resizeMode="cover"
     >
       <View style={styles.container}>
         {children}
       </View>
-    </LinearGradient>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: {
+  background: {
     flex: 1,
   },
   container: {
