@@ -6,6 +6,7 @@ import {
     View,
     TouchableWithoutFeedback,
     Image,
+    TouchableOpacity,
 } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/FirebaseConfig';
@@ -26,8 +27,7 @@ export default function Flashcard() {
     const [boldText, setBoldText] = useState('');
     const [additionalTextStyle, setAdditionalTextStyle] = useState({});
     const [messageStyle, setMessageStyle] = useState({});
-  
-  
+    const [showNextButton, setShowNextButton] = useState(false);
 
     const handleFeedback = (level: 'easy' | 'difficult' | 'wrong') => {
         let message = '';
@@ -35,40 +35,39 @@ export default function Flashcard() {
         let additionalText = '';
         let additionalTextStyle = {};
         let boldText = '';
-      
+
         switch (level) {
-          case 'easy':
-            message = 'Goed gedaan!';
-            messageStyle = { color: 'green', fontSize: 22 };
-            additionalText = 'We herhalen deze kaart weer over ';
-            additionalTextStyle = { color: 'black', fontSize: 12 };
-            boldText = '12 dagen'; 
-            break;
-          case 'difficult':
-            message = 'Blijf oefenen!';
-            messageStyle = { color: 'orange', fontSize: 22 };
-            additionalText = 'We herhalen deze kaart weer over';
-            additionalTextStyle = { color: 'black', fontSize: 12, fontWeight: 'thin'};
-            boldText = '4 dagen'; 
-            break;
-          case 'wrong':
-            message = 'Niet erg — probeer het nog eens!';
-            messageStyle = { color: 'red', fontSize: 22 };
-            additionalText = 'We herhalen deze kaart weer over';
-            additionalTextStyle = { color: 'black', fontSize: 12, fontWeight: 'thin' };
-            boldText = '2 dagen'; 
-            break;
+            case 'easy':
+                message = 'Goed gedaan!';
+                messageStyle = { color: 'green', fontSize: 22 };
+                additionalText = 'We herhalen deze kaart weer over ';
+                additionalTextStyle = { color: 'black', fontSize: 15 };
+                boldText = '12 dagen';
+                break;
+            case 'difficult':
+                message = 'Blijf oefenen!';
+                messageStyle = { color: 'orange', fontSize: 22 };
+                additionalText = 'We herhalen deze kaart weer over';
+                additionalTextStyle = { color: 'black', fontSize: 15 };
+                boldText = '4 dagen';
+                break;
+            case 'wrong':
+                message = 'Helaas!';
+                messageStyle = { color: 'red', fontSize: 22 };
+                additionalText = 'We herhalen deze kaart weer over';
+                additionalTextStyle = { color: 'black', fontSize: 15 };
+                boldText = '2 dagen';
+                break;
         }
-      
+
         setPopupText(message);
         setShowPopup(true);
-        setAdditionalText(additionalText); 
-        setBoldText(boldText); 
-        setAdditionalTextStyle(additionalTextStyle); 
+        setAdditionalText(additionalText);
+        setBoldText(boldText);
+        setAdditionalTextStyle(additionalTextStyle);
         setMessageStyle(messageStyle);
-        nextCard();
-      };
-      
+        setShowNextButton(true); 
+    };
 
     const frontInterpolate = animatedValue.interpolate({
         inputRange: [0, 180],
@@ -94,12 +93,14 @@ export default function Flashcard() {
         setIsFlipped(false);
         animatedValue.setValue(0);
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % cards.length);
+        setShowPopup(false);
+        setShowNextButton(false);
     };
 
     useEffect(() => {
         const fetchCards = async () => {
             const querySnapshot = await getDocs(collection(db, 'cards'));
-            const fetchedCards = [];
+            const fetchedCards: any[] = [];
             querySnapshot.forEach((doc) => {
                 fetchedCards.push(doc.data());
             });
@@ -110,24 +111,32 @@ export default function Flashcard() {
     }, []);
 
     if (cards.length === 0) return <Text>Loading...</Text>;
-
+    
     const card = cards[currentCardIndex];
-
 
     return (
         <BaseLayout>
-            <ProgressBar totalCards={0} remainingCards={0} />
+            {cards.length > 0 && (
+                <ProgressBar
+                    totalCards={cards.length}
+                    remainingCards={cards.length - currentCardIndex - 1}
+                />
+            )}
             <PopupMessage
                 message={popupText}
                 additionalText={additionalText}
                 boldText={boldText}
                 visible={showPopup}
-                messageStyle={messageStyle} 
+                messageStyle={messageStyle}
                 additionalTextStyle={additionalTextStyle}
                 onClose={() => setShowPopup(false)}
             />
-            <TouchableWithoutFeedback onPress={flipCard}>
-                <View style={styles.container}>
+            <View style={styles.container}>
+                <TouchableWithoutFeedback
+                    onPress={() => {
+                        if (!isFlipped) flipCard();
+                    }}
+                >
                     {/* Front Card */}
                     <Animated.View
                         style={[
@@ -138,35 +147,97 @@ export default function Flashcard() {
                             },
                         ]}
                     >
-                        <Text style={styles.word}>{card.dutch_word}</Text>
-                    </Animated.View>
-
-                    {/* Back Card */}
-                    <Animated.View
-                        style={[
-                            styles.card,
-                            styles.backCard,
-                            {
-                                transform: [{ perspective: 1000 }, { rotateY: backInterpolate }],
-                                opacity: isFlipped ? 1 : 0,
-                            },
-                        ]}
-                    >
-                        <Image source={{ uri: card.image_url }} style={styles.image} />
-                        <View style={styles.wordContainer}>
-                            <Text style={styles.wordBack}>{card.spanish_word}</Text>
-                            <SoundIcon />
-                        </View>
-                        <Text style={styles.exampleForeign}>{card.spanish_example}</Text>
-                        <Text style={styles.exampleNative}>{card.dutch_example}</Text>
+                        <Text style={styles.dutchWord}>{card.dutch_word}</Text>
                         <View style={styles.feedbackButtons}>
-                            <Text style={styles.buttonWrong} onPress={() => handleFeedback('wrong')}>Fout</Text>
-                            <Text style={styles.buttonDifficult} onPress={() => handleFeedback('difficult')}>Moeilijk</Text>
-                            <Text style={styles.buttonEasy} onPress={() => handleFeedback('easy')}>Makkelijk</Text>
-                        </View>
+                        {!showNextButton ? (
+                            <>
+                                <Text
+                                    style={styles.buttonWrong}
+                                    onPress={() => handleFeedback('wrong')}
+                                >
+                                    Fout
+                                </Text>
+                                <Text
+                                    style={styles.buttonDifficult}
+                                    onPress={() => handleFeedback('difficult')}
+                                >
+                                    Moeilijk
+                                </Text>
+                                <Text
+                                    style={styles.buttonEasy}
+                                    onPress={() => handleFeedback('easy')}
+                                >
+                                    Makkelijk
+                                </Text>
+                            </>
+                        ) : (
+                            <View style={styles.nextButtons}>
+                                <TouchableOpacity onPress={nextCard} style={styles.prevButton}>
+                                <Text style={styles.nextButtonText}>vorige</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={nextCard} style={styles.nextButton}>
+                                    <Text style={styles.nextButtonText}>Volgende kaart</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
                     </Animated.View>
-                </View>
-            </TouchableWithoutFeedback>
+                </TouchableWithoutFeedback>
+
+                {/* Back Card */}
+                <Animated.View
+                    style={[
+                        styles.card,
+                        {
+                            transform: [{ perspective: 1000 }, { rotateY: backInterpolate }],
+                            opacity: isFlipped ? 1 : 0,
+                        },
+                    ]}
+                >
+                    <Image source={{ uri: card.image_url }} style={styles.image} />
+                    <View style={styles.wordContainer}>
+                        <Text style={styles.wordBack}>{card.spanish_word}</Text>
+                        <SoundIcon />
+                    </View>
+                    <Text style={styles.exampleForeign}>{card.spanish_example}</Text>
+                    <Text style={styles.exampleNative}>{card.dutch_example}</Text>
+
+                    {/* Show feedback buttons or next button */}
+                    <View style={styles.feedbackButtons}>
+                        {!showNextButton ? (
+                            <>
+                                <Text
+                                    style={styles.buttonWrong}
+                                    onPress={() => handleFeedback('wrong')}
+                                >
+                                    Fout
+                                </Text>
+                                <Text
+                                    style={styles.buttonDifficult}
+                                    onPress={() => handleFeedback('difficult')}
+                                >
+                                    Moeilijk
+                                </Text>
+                                <Text
+                                    style={styles.buttonEasy}
+                                    onPress={() => handleFeedback('easy')}
+                                >
+                                    Makkelijk
+                                </Text>
+                            </>
+                        ) : (
+                            <View style={styles.nextButtons}>
+                                <TouchableOpacity onPress={nextCard} style={styles.prevButton}>
+                                <Text style={styles.nextButtonText}>vorige</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={nextCard} style={styles.nextButton}>
+                                    <Text style={styles.nextButtonText}>Volgende kaart</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                    </View>
+                </Animated.View>
+            </View>
         </BaseLayout>
     );
 }
@@ -176,26 +247,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
+        zIndex: 0,
     },
     card: {
         position: 'absolute',
-        width: 350,
-        height: 400,
+        width: '100%',
+        height: 650,
         backgroundColor: colors.white,
         borderRadius: 15,
         justifyContent: 'center',
         alignItems: 'center',
         backfaceVisibility: 'hidden',
+        padding: 16,
+        zIndex: 10,
     },
-    backCard: {
-        backgroundColor: colors.primary,
-    },
-    word: {
-        fontSize: 48,
+    dutchWord: {
+        fontSize: 64,
         color: colors.primary,
     },
     image: {
-        width: 350,
+        width: '100%',
         height: 350,
         borderRadius: 15,
     },
@@ -205,20 +276,25 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     wordBack: {
-        fontSize: 36,
+        fontSize: 54,
+        textDecorationLine: 'underline',
         color: colors.secondary,
+        marginBottom: 16,
     },
     exampleForeign: {
-        color: colors.white,
+        color: colors.black,
         fontSize: 20,
+        fontWeight: '400',
         textAlign: 'center',
-        marginVertical: 12,
+        marginBottom: 12,
     },
     exampleNative: {
-        color: colors.white,
+        color: colors.black,
         fontSize: 20,
         fontStyle: 'italic',
+        fontWeight: '200',
         textAlign: 'center',
+        marginBottom: 36,
     },
     feedbackButtons: {
         flexDirection: 'row',
@@ -227,26 +303,49 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     buttonWrong: {
-        color: '#CE3030',
+        color: colors.white,
         paddingHorizontal: 16,
         paddingVertical: 10,
-        backgroundColor: 'rgba(255,255,255,0.15)',
+        backgroundColor: '#CE3030',
         borderRadius: 15,
     },
     buttonDifficult: {
-        color: '#FE7A0F',
+        color: colors.white,
         paddingHorizontal: 16,
         paddingVertical: 10,
-        backgroundColor: 'rgba(255,255,255,0.15)',
+        backgroundColor: '#FE7A0F',
         borderRadius: 15,
     },
     buttonEasy: {
-        color: '#3E973B',
+        color: colors.white,
         paddingHorizontal: 16,
         paddingVertical: 10,
-        backgroundColor: 'rgba(255,255,255,0.15)',
+        backgroundColor: '#356E33',
         borderRadius: 15,
     },
+    nextButton: {
+        backgroundColor: colors.primary,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 15,
+    },
+    nextButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    prevButton: {
+        backgroundColor: colors.secondary,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 15,
+    },
+    nextButtonText: {
+        color: colors.white,
+        fontSize: 18,
+        fontWeight: 'bold',
+        alignItems: 'right',    
+        justifyContent: 'right',
+        textAlign: 'right',
+    },
 });
-
-

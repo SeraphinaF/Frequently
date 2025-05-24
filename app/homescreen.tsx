@@ -3,26 +3,24 @@ import { useNavigation } from "@react-navigation/native";
 import { db } from '@/FirebaseConfig';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { Link } from 'expo-router';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import { doc, getDoc } from 'firebase/firestore';
 import { colors } from '@/src/styles/colors';
-import { buttonStyles } from '@/src/styles/buttons'
-
-  ;
+import { buttonStyles } from '@/src/styles/buttons';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const auth = getAuth();
-  const [userName, setUserName] = useState('')
-  const [userId, setUserId] = useState('')
+  const [userName, setUserName] = useState('');
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const getUser = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        setUserId(user.uid)
-        await AsyncStorage.setItem("userId", user.uid)
+        setUserId(user.uid);
+        await AsyncStorage.setItem("userId", user.uid);
       }
     });
     return () => getUser();
@@ -37,8 +35,9 @@ export default function HomeScreen() {
         const userDocSnap = await getDoc(userDocRef);
 
         if (userDocSnap.exists()) {
-          setUserName(userDocSnap.data().name);
-          await AsyncStorage.setItem('userName', userName)
+          const name = userDocSnap.data().name;
+          setUserName(name);
+          await AsyncStorage.setItem('userName', name);
         } else {
           console.log("User not found");
         }
@@ -59,66 +58,144 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.content}>
-          <Text style={styles.welcomText}>Welkom {userName}!</Text>
+        <View style={styles.mainContent}>
+          <View style={styles.startContent}>
+            <Text style={styles.title}>Frequently</Text>
+            <Text style={styles.subTitle}>1000 most used Spanish words</Text>
+          </View>
+
+          <View style={styles.middleContent}>
+            <View style={styles.welcomeContainer}>
+              <Text style={styles.welcomeText}>Hi {userName}</Text>
+              <Text style={styles.welcomeStats}>Here are your stats!</Text>
+            </View>
+            <View style={styles.statsContainer}>
+              <Text style={styles.statsText}>
+                <Text style={styles.statsNumber}>20</Text> Nieuwe woorden
+              </Text>
+              <Text style={styles.statsText}>
+                <Text style={styles.statsNumber}>10</Text> Woorden herhalen
+              </Text>
+            </View>
+            <View style={styles.spanishList}>
+              <Text style={styles.spanishListText}>1000 Spanish words</Text>
+              <Image
+                source={require('@/assets/images/spanish-icon.png')}
+                style={styles.languageIcon}
+                resizeMode="cover"
+              />
+            </View>
+          </View>
+
+          <View style={styles.endContent}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("flashCard")}
+              style={[styles.button, buttonStyles.buttonPrimary]}
+            >
+              <Text style={buttonStyles.textPrimary}>Start</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.content}>
-          <Text style={styles.statsText}>
-            <Text style={styles.statsNumber}>20</Text> Nieuwe woorden
-          </Text>
-          <Text style={styles.statsText}>
-            <Text style={styles.statsNumber}>10</Text> Woorden herhalen
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("flashCard")}
-          style={[styles.button, buttonStyles.buttonPrimary]}
-        >
-          <Text style={buttonStyles.textPrimary}>Start</Text>
-        </TouchableOpacity>
       </SafeAreaView>
     </BaseLayout>
-
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    justifyContent: 'space-between',
-    padding: 16,
+    paddingHorizontal: 16,
   },
   logoutWrapper: {
     alignItems: 'flex-end',
+    marginTop: 8,
   },
   logoutText: {
     color: colors.white,
   },
-  content: {
+  mainContent: {
     flex: 1,
-    justifyContent: 'center',
-    color: colors.white,
+    justifyContent: 'space-evenly',
   },
-  welcomText: {
+  startContent: {
+    alignItems: 'center',
+  },
+  title: {
     color: colors.white,
-    fontSize: 32,
-    marginTop: 56,
+    fontFamily: '',
+    fontSize: 54,
     textAlign: 'center',
+  },
+  subTitle: {
+    color: colors.white,
+    fontSize: 20,
+    textAlign: 'center',
+    fontWeight: '400',
+    fontFamily: '',
+  },
+  welcomeContainer: {
+    backgroundColor: '#2E326E',
+    padding: 16,
+    borderRadius: 15,
+    marginBottom: 16,
+    
+  },
+  welcomeText: {
+    color: colors.white,
+    fontSize: 24,
+    fontFamily: '',
+    fontWeight: '500',
+  },
+  welcomeStats: {
+    color: colors.white,
+    fontSize: 20,
+    fontWeight: '400',
+    fontFamily: '',
+  },
+  statsContainer: {
+    backgroundColor: '#2E326E',
+    padding: 16,
+    borderRadius: 15,
+    marginBottom: 16,
+    gap: 8,
+    
   },
   statsText: {
     color: colors.white,
     fontSize: 20,
-    textAlign: 'center',
-    marginTop: 8,
-    fontWeight: '300',
+    fontWeight: '400',
+    fontFamily: '',
   },
   statsNumber: {
     fontWeight: '700',
     color: colors.white,
-  },  
+  },
+  spanishList: {
+    backgroundColor: '#2E326E',
+    padding: 16,
+    borderRadius: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  spanishListText: {
+    color: colors.white,
+    fontSize: 20,
+    fontWeight: '400',
+    fontFamily: '',
+  },
+  languageIcon: {
+    width: 32,
+    height: 32,
+  },
+  endContent: {
+    alignItems: 'center',
+  },
   button: {
-    marginBottom: 16,
+    width: '100%',
+    padding: 16,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
-
-
