@@ -19,9 +19,9 @@ export default function ProgressBar({ totalCards, remainingCards }: ProgressBarP
                 <View style={styles.progressOuterWrapper}>
                     <View style={[styles.progressWrapper, { width: `${progress * 100}%` }]}>
                         <LinearGradient
-                           colors={['#A0B013', '#D1DD56', '#A0B013']}
-                           style={styles.gradient}
-                         >
+                            colors={['#A0B013', '#D1DD56', '#A0B013']}
+                            style={styles.gradient}
+                        >
                         </LinearGradient>
                     </View>
                 </View>
@@ -37,29 +37,28 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         marginBottom: -20,
-        position:'relative',
+        position: 'relative',
     },
     row: {
         flexDirection: 'row',
-        alignItems: 'center', 
-        gap: 10, 
+        alignItems: 'center',
+        gap: 10,
     },
     progressOuterWrapper: {
         flex: 1, 
-        padding: 2,
-        backgroundColor: colors.white,
+        padding: 6,
+        backgroundColor: colors.greyLight,
         borderRadius: 20,
     },
     progressWrapper: {
-        height: 20,
+        height: 14,
         width: '100%',
-        backgroundColor: colors.greyLight,
-        borderRadius: 15,
+        borderRadius: 100,
         overflow: 'hidden',
     },
     gradient: {
-        flex: 1
-      },
+        flex: 1,
+    },
     closeBtn: {
         backgroundColor: colors.greyLight,
         paddingHorizontal: 10,

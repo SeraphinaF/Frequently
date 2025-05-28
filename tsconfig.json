@@ -13,5 +13,5 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "components/import.js"
-, "app/flashCard.tsx", "app/frontCard.tsx", "app/homeScreen.tsx", "app/backCard.tsx", "app/index.tsx", "app/register.tsx", "app/_layout.tsx", "components/ui/popupMessage.jsx"  ]
+, "app/flashCard.tsx", "app/frontCard.tsx", "app/homeScreen.tsx", "app/backCard.tsx", "app/index.tsx", "app/register.tsx", "app/_layout.tsx", "components/popupMessage.jsx"  ]
 }

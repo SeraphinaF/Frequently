@@ -5,7 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { colors } from '../src/styles/colors';
 import BaseLayout  from '../components/ui/BaseLayout';
 import { buttonStyles } from '../src/styles/buttons';
-import ProgressBar from '@/components/ui/ProgressBar';
+import ProgressBar from '@/components/ProgressBar';
 import { db } from '@/FirebaseConfig'; 
 import { useNavigation } from '@react-navigation/native';
 

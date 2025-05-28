@@ -2,7 +2,7 @@ import { StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import  BaseLayout  from '@/components/ui/BaseLayout';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '@/src/styles/colors';
-import ProgressBar from '@/components/ui/ProgressBar';
+import ProgressBar from '@/components/ProgressBar';
 import SoundIcon from '@/components/ui/SoundIcon'
 import { db } from '@/FirebaseConfig';
 import { useEffect, useState } from 'react';

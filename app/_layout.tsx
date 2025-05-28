@@ -14,7 +14,8 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     // Raleway: require('../assets/fonts/Raleway-VariableFont_wght.ttf'),
-    // Playpen: require('../assets/fonts/PlaypenSans-VariableFont_wght.ttf')
+    Nunito: require('../assets/fonts/Nunito-VariableFont_wght.ttf'),
+    // Nunito: require('../assets/fonts/NunitoSans-VariableFont_wght.ttf')
   });
 
   useEffect(() => {

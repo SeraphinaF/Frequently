@@ -9,6 +9,7 @@ import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, Image } from 'r
 import { doc, getDoc } from 'firebase/firestore';
 import { colors } from '@/src/styles/colors';
 import { buttonStyles } from '@/src/styles/buttons';
+import HorizontalLogo from '@/components/ui/HorizontalLogo';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -60,13 +61,18 @@ export default function HomeScreen() {
 
         <View style={styles.mainContent}>
           <View style={styles.startContent}>
-            <Text style={styles.title}>Frequently</Text>
-            <Text style={styles.subTitle}>1000 most used Spanish words</Text>
+            <View>
+              <HorizontalLogo width={250} height={175} />
+            </View>
           </View>
 
           <View style={styles.middleContent}>
             <View style={styles.welcomeContainer}>
-              <Text style={styles.welcomeText}>Hi {userName}</Text>
+              <Text style={styles.welcomeText}>Hi  
+                <Text style={styles.userName}> {userName}</Text>
+                !
+              </Text>
+
               <Text style={styles.welcomeStats}>Here are your stats!</Text>
             </View>
             <View style={styles.statsContainer}>
@@ -121,57 +127,60 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    color: colors.white,
-    fontFamily: '',
+    color: colors.black,
+    fontFamily: 'Nunito',
     fontSize: 54,
     textAlign: 'center',
   },
   subTitle: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
     textAlign: 'center',
-    fontWeight: '400',
-    fontFamily: '',
+    fontWeight: '800',
+    fontFamily: 'Nunito',
   },
   welcomeContainer: {
-    backgroundColor: '#2E326E',
+    backgroundColor: colors.white,
     padding: 16,
     borderRadius: 15,
     marginBottom: 16,
-    
+
   },
   welcomeText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 24,
-    fontFamily: '',
-    fontWeight: '500',
+    fontFamily: 'Nunito',
+    fontWeight: '700',
+  },
+  userName:{
+    color: colors.primary,
   },
   welcomeStats: {
-    color: colors.white,
-    fontSize: 20,
-    fontWeight: '400',
-    fontFamily: '',
+    color: colors.black,
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'Nunito',
   },
   statsContainer: {
-    backgroundColor: '#2E326E',
+    backgroundColor: colors.white,
     padding: 16,
     borderRadius: 15,
     marginBottom: 16,
     gap: 8,
-    
+
   },
   statsText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
-    fontWeight: '400',
-    fontFamily: '',
+    fontWeight: '600',
+    fontFamily: 'Nunito',
   },
   statsNumber: {
     fontWeight: '700',
-    color: colors.white,
+    color: colors.primary,
   },
   spanishList: {
-    backgroundColor: '#2E326E',
+    backgroundColor: colors.white,
     padding: 16,
     borderRadius: 15,
     flexDirection: 'row',
@@ -179,10 +188,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   spanishListText: {
-    color: colors.white,
+    color: colors.black,
     fontSize: 20,
-    fontWeight: '400',
-    fontFamily: '',
+    fontWeight: '600',
+    fontFamily: 'Nunito',
   },
   languageIcon: {
     width: 32,
