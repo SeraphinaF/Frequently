@@ -66,7 +66,7 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <View style={styles.middleContent}>
+          <View>
             <View style={styles.welcomeContainer}>
               <Text style={styles.welcomeText}>Hi  
                 <Text style={styles.userName}> {userName}</Text>

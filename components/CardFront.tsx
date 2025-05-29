@@ -2,6 +2,7 @@ import React from 'react';
 import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 import { colors } from '@/src/styles/colors';
 import FeedbackButtons from './FeedbackButtons';
+import { updateUserCardProgress } from '@/updateUserCardProgress';  
 
 interface CardFrontProps {
     card: any;
@@ -33,13 +34,20 @@ export default function CardFront({
             <Image
                 source={{ uri: card.image_url }}
                 style={styles.image}
+                onLoadEnd={() => setIsImageLoaded(true)}
             />
             <Text style={styles.dutchWord}>{card.dutch_word}</Text>
             <View style={styles.feedbackContainer}>
                 <Text style={styles.feedbackTextScale}>
                     Hoe lastig vind je dit woord op een schaal van 1-4??
                 </Text>
-                <FeedbackButtons handleFeedback={handleFeedback} />
+                <FeedbackButtons
+                    cardId={card.id}
+                    onFeedbackComplete={() => {
+                        // You can also trigger any other UI changes here, like flipping the card or moving to the next card.
+                    }}
+                    handleFeedback={handleFeedback} 
+                />
             </View>
         </Animated.View>
     );

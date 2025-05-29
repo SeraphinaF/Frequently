@@ -23,22 +23,27 @@ export default function Flashcard() {
     const [additionalTextStyle, setAdditionalTextStyle] = useState({});
     const [messageStyle, setMessageStyle] = useState({});
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-
-
+ 
     useEffect(() => {
         const fetchCards = async () => {
             const querySnapshot = await getDocs(collection(db, 'cards'));
-            const fetchedCards = [];
-            querySnapshot.forEach((doc) => {
-                fetchedCards.push(doc.data());
-            });
+            const fetchedCards = querySnapshot.docs.map(doc => ({
+                id: doc.id,      
+                ...doc.data(),
+            }));
             setCards(fetchedCards);
         };
-
         fetchCards();
     }, []);
 
-    const handleFeedback = (level: '1' | '2' | '3' | '4') => {
+    const handleFeedback = async (level: '1' | '2' | '3' | '4') => {
+      
+        try {
+          await updateUserCardProgress({
+            userId: user.uid,
+            cardId: card.id,
+            quality: parseInt(level),
+        });
         let message = '';
         let messageStyle = {};
         let additionalText = '';
@@ -82,7 +87,11 @@ export default function Flashcard() {
         setAdditionalTextStyle(additionalTextStyle);
         setMessageStyle(messageStyle);
         flipCard();
+    }catch (error) {
+        console.error('Error updating card progress:', error);
+      }
     };
+    
 
     const frontInterpolate = animatedValue.interpolate({
         inputRange: [0, 180],
@@ -151,7 +160,6 @@ export default function Flashcard() {
                     />
                 )}
             </View>
-
         </SafeAreaView>
     );
 }
