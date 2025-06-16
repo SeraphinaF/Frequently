@@ -1,113 +1,132 @@
-import React from 'react';
-import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '@/src/styles/colors';
-import SoundIcon from '@/components/ui/SoundIcon';
+import SoundIcon from './ui/SoundIcon';
+import { Audio } from 'expo-av';
+import { Sound } from 'expo-av/build/Audio';
+import FeedbackButtons from './FeedbackButtons';
 
 interface CardBackProps {
     card: any;
     isFlipped: boolean;
-    backInterpolate: Animated.AnimatedInterpolation<string>;
-    nextCard: () => void;
+    handleUserFeedback: (level: 1 | 2 | 3 | 4) => void;
 }
 
-export default function CardBack({ card, isFlipped, backInterpolate, nextCard }: CardBackProps) {
+export default function CardBack({ card, isFlipped, nextCard, handleUserFeedback }: CardBackProps) {
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const [sound, setSound] = useState();
+
+    async function playSound() {
+        try {
+            if (sound) {
+                await sound.unloadAsync();
+                setSound(undefined);
+            }
+            const { sound: newSound } = await Audio.Sound.createAsync(
+                { uri: card.dutch_audio_url },
+                { shouldPlay: true }
+            );
+            setSound(newSound);
+
+            newSound.setOnPlaybackStatusUpdate(status => {
+                if (!status.isPlaying) {
+                    newSound.unloadAsync();
+                    setSound(undefined);
+                }
+            });
+        } catch (error) {
+            console.error('Audio playback error:', error);
+        }
+    }
+
+    React.useEffect(() => {
+        if (isFlipped && imageLoaded) {
+            playSound();
+        }
+    }, [isFlipped, imageLoaded]);
+
     return (
-        <Animated.View
+        <View
             style={[
                 styles.card,
                 {
-                    transform: [{ perspective: 1000 }, { rotateY: backInterpolate }],
-                    opacity: isFlipped ? 1 : 0,
+                    opacity: isFlipped && imageLoaded ? 1 : 0,
                 },
             ]}
         >
-            <Image source={{ uri: card.image_url }} style={styles.image} />
-            <View style={styles.wordContainer}>
-                <Text style={styles.wordBack}>{card.spanish_word}</Text>
-                <SoundIcon />
-            </View>
-            <Text style={styles.exampleForeign}>{card.spanish_example}</Text>
-            <Text style={styles.exampleNative}>{card.dutch_example}</Text>
-            <View style={styles.nextButtons}>
-                <TouchableOpacity onPress={nextCard} style={styles.prevButton}>
-                    <Text style={styles.prevButtonText}>Terug</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={nextCard} style={styles.nextButton}>
-                    <Text style={styles.nextButtonText}>Volgende kaart</Text>
-                </TouchableOpacity>
-            </View>
-        </Animated.View>
+            <Image
+                source={{ uri: card.image_url }}
+                style={styles.image}
+                onLoad={() => setImageLoaded(true)}
+            />
+            {imageLoaded && (
+                <>
+                    <View style={styles.wordContainer}>
+                        <Text style={styles.spanishWord}>{card.spanish_word}</Text>
+                        <TouchableOpacity style={styles.soundIcon} onPress={playSound}>
+                            <SoundIcon width={20} height={20} />
+                        </TouchableOpacity>
+                    </View>
+                    <Text style={styles.exampleForeign}>{card.spanish_example}</Text>
+                    <Text style={styles.exampleNative}>{card.dutch_example}</Text>
+                    <View style={styles.feedbackContainer}>
+                        <FeedbackButtons
+                            cardId={card.id}
+                            onFeedbackComplete={() => { }}
+                            handleUserFeedback={(quality) => handleUserFeedback(quality as 1 | 2 | 3 | 4)} nextCard={function (): void {
+                                throw new Error('Function not implemented.');
+                            }} />
+                    </View>
+                </>
+            )}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     card: {
-        position: 'absolute',
         width: '100%',
-        height: 650,
-        borderRadius: 15,
+        height: '100%',
         alignItems: 'center',
-        backfaceVisibility: 'hidden',
-        zIndex: 10,
-        marginTop: 60,
     },
     image: {
+        marginTop: 48,
         width: '100%',
-        height: '50%',
+        height: '45%',
         borderRadius: 15,
     },
     wordContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 32,
     },
-    wordBack: {
-        fontSize: 72,
+    soundIcon:{
+        paddingBottom: 24,
+        paddingLeft: 4,
+    },
+    spanishWord: {
+        paddingLeft: 16,
+        fontSize: 64,
+        fontWeight: '500',
         color: colors.tertiary,
-        marginRight: 20,
+        marginTop: 16,
+        marginBottom: 8,
     },
     exampleForeign: {
         color: colors.tertiary,
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '500',
         marginBottom: 8,
+        textAlign: 'center',
     },
     exampleNative: {
         color: colors.tertiary,
         fontSize: 18,
         fontWeight: '300',
         fontStyle: 'italic',
+        textAlign: 'center',
     },
-    nextButtons: {
+    feedbackContainer: {
         position: 'absolute',
-        bottom: 24,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginTop: 12,
-        paddingHorizontal: 8,
-    },
-    prevButton: {
-        borderRadius: 12,
-        borderWidth: 1,
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-        borderColor: colors.secondary,
-    },
-    prevButtonText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: colors.secondary,
-    },
-    nextButton: {
-        borderRadius: 12,
-        backgroundColor: colors.secondary,
-        paddingVertical: 10,
-        paddingHorizontal: 16,
-    },
-    nextButtonText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: colors.white,
+        bottom: 0,
     },
 });

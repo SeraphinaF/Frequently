@@ -1,89 +1,80 @@
-import React from 'react';
-import { Animated, Image, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '@/src/styles/colors';
-import FeedbackButtons from './FeedbackButtons';
-import { updateUserCardProgress } from '@/updateUserCardProgress';  
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface CardFrontProps {
     card: any;
     isFlipped: boolean;
-    frontInterpolate: Animated.AnimatedInterpolation<string>;
-    handleFeedback: (level: '1' | '2' | '3' | '4') => void;
-    isImageLoaded: boolean;
-    setIsImageLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+    flipCard?: () => void;
 }
 
 export default function CardFront({
     card,
     isFlipped,
-    frontInterpolate,
-    handleFeedback,
-    isImageLoaded,
-    setIsImageLoaded,
+    flipCard
 }: CardFrontProps) {
+    const [imageLoaded, setImageLoaded] = useState(false);
+
     return (
-        <Animated.View
+        <View
             style={[
                 styles.card,
                 {
-                    transform: [{ perspective: 1000 }, { rotateY: frontInterpolate }],
-                    opacity: isFlipped ? 0 : 1,
+                    opacity: !isFlipped && imageLoaded ? 1 : 0,
                 },
             ]}
         >
             <Image
                 source={{ uri: card.image_url }}
                 style={styles.image}
-                onLoadEnd={() => setIsImageLoaded(true)}
+                onLoad={() => setImageLoaded(true)}
             />
-            <Text style={styles.dutchWord}>{card.dutch_word}</Text>
-            <View style={styles.feedbackContainer}>
-                <Text style={styles.feedbackTextScale}>
-                    Hoe lastig vind je dit woord op een schaal van 1-4??
-                </Text>
-                <FeedbackButtons
-                    cardId={card.id}
-                    onFeedbackComplete={() => {
-                        // You can also trigger any other UI changes here, like flipping the card or moving to the next card.
-                    }}
-                    handleFeedback={handleFeedback} 
-                />
-            </View>
-        </Animated.View>
+            {imageLoaded && (
+                <>
+                    <Text style={styles.dutchWord}>{card.dutch_word}</Text>
+                    <TouchableOpacity onPress={flipCard} style={styles.nextButton}>
+                        <Text style={styles.nextButtonText}>Antwoord</Text>
+                    </TouchableOpacity>
+                </>
+            )}
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     card: {
-        position: 'absolute',
         width: '100%',
-        height: 650,
-        borderRadius: 15,
+        height: '100%',
         alignItems: 'center',
-        backfaceVisibility: 'hidden',
-        zIndex: 10,
-        marginTop: 60,
     },
     dutchWord: {
-        fontSize: 72,
+        fontSize: 64,
+        fontWeight: '500',
         color: colors.tertiary,
         marginTop: 16,
     },
     image: {
+        marginTop: 48,
         width: '100%',
-        height: '50%',
+        height: '45%',
         borderRadius: 15,
     },
-    feedbackContainer: {
+    nextButton: {
         position: 'absolute',
-        bottom: 24,
-        width: '100%',
+        bottom: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 15,
+        backgroundColor: colors.tertiary,
+        paddingVertical: 16,
+        paddingHorizontal: 30,
+        alignSelf: 'center',
     },
-    feedbackTextScale: {
-        color: colors.black,
-        fontSize: 16,
-        fontWeight: '400',
+    nextButtonText: {
+        fontSize: 24,
+        fontWeight: '700',
+        color: colors.white,
         textAlign: 'center',
-        marginBottom: 16,
     },
 });

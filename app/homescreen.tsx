@@ -10,6 +10,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { colors } from '@/src/styles/colors';
 import { buttonStyles } from '@/src/styles/buttons';
 import HorizontalLogo from '@/components/ui/HorizontalLogo';
+import DonutChart from '@/components/ui/DonutChart';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -62,48 +63,31 @@ export default function HomeScreen() {
         <View style={styles.mainContent}>
           <View style={styles.startContent}>
             <View>
-              <HorizontalLogo width={250} height={175} />
+              <HorizontalLogo width={300} height={200} />
             </View>
           </View>
 
-          <View>
-            <View style={styles.welcomeContainer}>
-              <Text style={styles.welcomeText}>Hi  
-                <Text style={styles.userName}> {userName}</Text>
-                !
-              </Text>
-
-              <Text style={styles.welcomeStats}>Here are your stats!</Text>
-            </View>
-            <View style={styles.statsContainer}>
-              <Text style={styles.statsText}>
-                <Text style={styles.statsNumber}>20</Text> Nieuwe woorden
-              </Text>
-              <Text style={styles.statsText}>
-                <Text style={styles.statsNumber}>10</Text> Woorden herhalen
-              </Text>
-            </View>
-            <View style={styles.spanishList}>
-              <Text style={styles.spanishListText}>1000 Spanish words</Text>
-              <Image
-                source={require('@/assets/images/spanish-icon.png')}
-                style={styles.languageIcon}
-                resizeMode="cover"
-              />
-            </View>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <DonutChart
+              percentage={27}
+              radius={120}
+              strokeWidth={25}
+              color="#252B7A"
+            />
           </View>
-
           <View style={styles.endContent}>
+        
             <TouchableOpacity
               onPress={() => navigation.navigate("flashCard")}
               style={[styles.button, buttonStyles.buttonPrimary]}
             >
-              <Text style={buttonStyles.textPrimary}>Start</Text>
+                <Text style={styles.buttonText}>Let's start!</Text>
             </TouchableOpacity>
-          </View>
+   
         </View>
-      </SafeAreaView>
-    </BaseLayout>
+      </View>
+    </SafeAreaView>
+    </BaseLayout >
   );
 }
 
@@ -121,7 +105,6 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    justifyContent: 'space-evenly',
   },
   startContent: {
     alignItems: 'center',
@@ -152,7 +135,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito',
     fontWeight: '700',
   },
-  userName:{
+  userName: {
     color: colors.primary,
   },
   welcomeStats: {
@@ -200,11 +183,18 @@ const styles = StyleSheet.create({
   endContent: {
     alignItems: 'center',
   },
+  buttonText: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginRight: 8,
+    color: colors.tertiary,
+  },
   button: {
-    width: '100%',
     padding: 16,
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'row',
   },
 });

@@ -9,14 +9,14 @@ export default function PopupMessage({ message, messageStyle, additionalText, ad
     if (visible) {
       Animated.timing(opacity, {
         toValue: 1,
-        duration: 300,
+        duration: 100,
         useNativeDriver: true,
       }).start();
 
       const timer = setTimeout(() => {
         Animated.timing(opacity, {
           toValue: 0,
-          duration: 600,
+          duration: 100,
           useNativeDriver: true,
         }).start(() => onClose());
       }, 1500); 

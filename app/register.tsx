@@ -24,17 +24,22 @@ const register = () => {
       return;
     }
     try {
+      console.log('Signing up user with email:', email.trim());
       const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
       const user = userCredential.user;
-
+      console.log('User created with uid:', user.uid);
+  
       // Save the name and email in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         name: name,
         email: email.trim(),
       });
-
+      console.log('User document created in Firestore for:', user.uid);
+  
       // Create initial progress documents for each card
       const cardsSnapshot = await getDocs(collection(db, 'cards'));
+      console.log(`Found ${cardsSnapshot.docs.length} cards to create progress for.`);
+  
       for (const cardDoc of cardsSnapshot.docs) {
         const cardId = cardDoc.id;
         const progressDocRef = doc(db, 'userCardProgress', `${user.uid}_${cardId}`);
@@ -47,16 +52,19 @@ const register = () => {
           nextReviewDate: null,
           lastReviewedDate: null,
         });
+        console.log(`Progress document created for card ${cardId}`);
       }
-
+  
+      console.log('All user progress documents created successfully.');
+  
       // Redirect to home screen
       router.replace('/homeScreen');
-
+  
     } catch (error: any) {
-      console.log(error);
+      console.log('Error during sign up:', error);
       alert('Registratie mislukt: ' + error.message);
     }
-  };
+  };  
 
   return (
     <BaseLayout>

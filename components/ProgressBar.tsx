@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, SafeAreaView, TouchableOpacity, Text } from 'react-native';
 import { colors } from '@/src/styles/colors';
-import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from '@expo/vector-icons'; // You can use any icon library
 
 interface ProgressBarProps {
     totalCards: number;
@@ -10,7 +11,7 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ totalCards, remainingCards }: ProgressBarProps) {
-    const navigation = useNavigation()
+    const navigation = useNavigation();
     const progress = totalCards > 0 ? (totalCards - remainingCards) / totalCards : 0;
 
     return (
@@ -19,19 +20,27 @@ export default function ProgressBar({ totalCards, remainingCards }: ProgressBarP
                 <View style={styles.progressOuterWrapper}>
                     <View style={[styles.progressWrapper, { width: `${progress * 100}%` }]}>
                         <LinearGradient
-                            colors={['#A0B013', '#D1DD56', '#A0B013']}
+                            colors={['#0C1049', '#535AC3', '#0C1049']}
                             style={styles.gradient}
-                        >
-                        </LinearGradient>
+                        />
                     </View>
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate("homeScreen")} style={styles.closeBtn}>
-                    <Text>X</Text>
+                <TouchableOpacity
+                    style={styles.closeBtn}
+                    onPress={() =>
+                        navigation.reset({
+                          index: 0,
+                          routes: [{ name: 'homeScreen' }],
+                        })
+                      }
+                >
+                    <Ionicons name="close" size={20} color={colors.primaryDark} />
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -40,12 +49,13 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     row: {
+        display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
     },
     progressOuterWrapper: {
-        flex: 1, 
+        flex: 1,
         padding: 6,
         backgroundColor: colors.greyLight,
         borderRadius: 20,
@@ -61,8 +71,8 @@ const styles = StyleSheet.create({
     },
     closeBtn: {
         backgroundColor: colors.greyLight,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
+        paddingHorizontal: 5,
+        paddingVertical: 5,
         borderRadius: 100,
     },
 });

@@ -1,130 +1,92 @@
-import { useRef, useState, useEffect } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
+import { useState, useEffect } from 'react';
+import { StyleSheet, View, Image, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
+import { collection } from 'firebase/firestore';
 import { db } from '@/FirebaseConfig';
 import { colors } from '@/src/styles/colors';
 import ProgressBar from '@/components/ProgressBar';
-import PopupMessage from '@/components/popupMessage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CardFront from '@/components/CardFront';
 import CardBack from '@/components/CardBack';
-
+import { getAuth } from 'firebase/auth';
+import generateSessionCards from '@/generateSessionCards';
+import { useNavigation } from "@react-navigation/native";
 
 export default function Flashcard() {
     const [cards, setCards] = useState([]);
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
-    const animatedValue = useRef(new Animated.Value(0)).current;
 
-    const [popupText, setPopupText] = useState('');
-    const [showPopup, setShowPopup] = useState(false);
-    const [additionalText, setAdditionalText] = useState('');
-    const [boldText, setBoldText] = useState('');
-    const [additionalTextStyle, setAdditionalTextStyle] = useState({});
-    const [messageStyle, setMessageStyle] = useState({});
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
- 
+    const auth = getAuth();
+    const user = auth.currentUser;
+
     useEffect(() => {
-        const fetchCards = async () => {
-            const querySnapshot = await getDocs(collection(db, 'cards'));
-            const fetchedCards = querySnapshot.docs.map(doc => ({
-                id: doc.id,      
-                ...doc.data(),
-            }));
-            setCards(fetchedCards);
+        const fetchSession = async () => {
+            if (!user || !user.uid) {
+                return;
+            }
+            const userId = user.uid;
+            const userProgressRef = collection(db, 'userCardProgress');
+            const cardRef = collection(db, 'cards');
+
+            try {
+                const sessionCards = await generateSessionCards(userProgressRef, cardRef, userId);
+
+                const preloadPromises = sessionCards.map(async (card) => {
+                    try {
+                        if (card.image_url && typeof card.image_url === 'string') {
+                            await Image.prefetch(card.image_url);
+                        }
+                        return new Promise((resolve) => {
+                            Image.getSize(
+                                card.image_url,
+                                () => {
+                                    resolve();
+                                },
+                                (error) => {
+                                    resolve();
+                                }
+                            );
+                        });
+                    } catch (err) {
+                        console.warn('Image preload error:', err);
+                    }
+                });
+
+                await Promise.all(preloadPromises);
+                console.log('All images preloaded and measured');
+                setCards(sessionCards);
+            } catch (error) {
+                console.error('Error fetching session cards:', error);
+            }
         };
-        fetchCards();
-    }, []);
 
-    const handleFeedback = async (level: '1' | '2' | '3' | '4') => {
-      
-        try {
-          await updateUserCardProgress({
-            userId: user.uid,
-            cardId: card.id,
-            quality: parseInt(level),
-        });
-        let message = '';
-        let messageStyle = {};
-        let additionalText = '';
-        let additionalTextStyle = {};
-        let boldText = '';
+        fetchSession();
+    }, [user]);
 
-        switch (level) {
-            case '1':
-                message = 'Goed gedaan!';
-                messageStyle = { color: 'green', fontSize: 22 };
-                additionalText = 'We herhalen deze kaart weer over ';
-                additionalTextStyle = { color: 'black', fontSize: 15 };
-                boldText = '12 dagen';
-                break;
-            case '2':
-                message = 'Blijf oefenen!';
-                messageStyle = { color: 'orange', fontSize: 22 };
-                additionalText = 'We herhalen deze kaart weer over';
-                additionalTextStyle = { color: 'black', fontSize: 15 };
-                boldText = '4 dagen';
-                break;
-            case '3':
-                message = 'Helaas!';
-                messageStyle = { color: 'red', fontSize: 22 };
-                additionalText = 'We herhalen deze kaart weer over';
-                additionalTextStyle = { color: 'black', fontSize: 15 };
-                boldText = '2 dagen';
-                break;
-            case '4':
-                message = 'Helaas!';
-                messageStyle = { color: 'red', fontSize: 22 };
-                additionalText = 'We herhalen deze kaart weer over';
-                additionalTextStyle = { color: 'black', fontSize: 15 };
-                boldText = '2 dagen';
-                break;
-        }
-        setPopupText(message);
-        setShowPopup(true);
-        setAdditionalText(additionalText);
-        setBoldText(boldText);
-        setAdditionalTextStyle(additionalTextStyle);
-        setMessageStyle(messageStyle);
-        flipCard();
-    }catch (error) {
-        console.error('Error updating card progress:', error);
-      }
-    };
-    
+  const handleUserFeedback = () => {
+    setIsFlipped(false); 
+};
 
-    const frontInterpolate = animatedValue.interpolate({
-        inputRange: [0, 180],
-        outputRange: ['0deg', '180deg'],
-    });
-
-    const backInterpolate = animatedValue.interpolate({
-        inputRange: [0, 180],
-        outputRange: ['180deg', '360deg'],
-    });
 
     const flipCard = () => {
-        Animated.spring(animatedValue, {
-            toValue: isFlipped ? 0 : 180,
-            useNativeDriver: false,
-            friction: 8,
-            tension: 10,
-        }).start(() => {
-            setIsFlipped(!isFlipped);
-        });
+        setIsFlipped(true);
     };
 
-    const nextCard = () => {
-        setIsFlipped(false);
-        animatedValue.setValue(0);
-        setIsImageLoaded(false);
+    const advanceCard = () => {
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % cards.length);
-        setShowPopup(false);
+        setIsFlipped(false);
     };
-
-    if (cards.length === 0) return <Text>Loading...</Text>;
 
     const card = cards[currentCardIndex];
+
+    if (!card) {
+        console.log('No card to display yet, showing spinner');
+        return (
+            <SafeAreaView style={styles.spinner}>
+                <ActivityIndicator size="large" color={colors.tertiary} />
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -132,31 +94,20 @@ export default function Flashcard() {
                 totalCards={cards.length}
                 remainingCards={cards.length - currentCardIndex - 1}
             />
-            <PopupMessage
-                message={popupText}
-                additionalText={additionalText}
-                boldText={boldText}
-                visible={showPopup}
-                messageStyle={messageStyle}
-                additionalTextStyle={additionalTextStyle}
-                onClose={() => setShowPopup(false)}
-            />
             <View>
                 {isFlipped ? (
                     <CardBack
-                        card={card}
-                        isFlipped={isFlipped}
-                        backInterpolate={backInterpolate}
-                        nextCard={nextCard}
+                    card={card}
+                    isFlipped={isFlipped}
+                    handleUserFeedback={(quality) => {
+                        advanceCard();  
+                    }}
                     />
                 ) : (
                     <CardFront
-                        card={card}
-                        isFlipped={isFlipped}
-                        frontInterpolate={frontInterpolate}
-                        handleFeedback={handleFeedback}
-                        isImageLoaded={isImageLoaded}
-                        setIsImageLoaded={setIsImageLoaded}
+                    card={card}
+                    isFlipped={isFlipped}
+                    flipCard={flipCard}
                     />
                 )}
             </View>
@@ -170,5 +121,9 @@ const styles = StyleSheet.create({
         zIndex: 0,
         backgroundColor: colors.white,
         padding: 16,
+    },
+    spinner: {
+        flex: 1,
+        justifyContent: 'center',
     },
 });
