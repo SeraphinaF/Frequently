@@ -1,12 +1,15 @@
 import { supermemo } from './supermemo';
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, collection, getDoc, updateDoc, getDocs } from 'firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  collection,
+  getDoc,
+  updateDoc,
+  getDocs,
+} from 'firebase/firestore';
 import { app } from './FirebaseConfig';
-
-const firebaseConfig = {
-  // your config here
-};
 
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -31,16 +34,12 @@ export async function updateUserCardProgress({
   cardId: string;
   quality: number;
 }) {
-  // console.log(`Updating progress for userId: ${userId}, cardId: ${cardId}, quality: ${quality}`);
-
   if (!userId || !cardId) {
-    // console.error('Missing userId or cardId');
+    console.error('Missing userId or cardId');
     return;
   }
 
   const progressId = `${userId}_${cardId}`;
-  // console.log('Looking for userCardProgress doc with id:', progressId);
-
   const docRef = doc(db, 'userCardProgress', progressId);
   const docSnap = await getDoc(docRef);
 
@@ -50,7 +49,6 @@ export async function updateUserCardProgress({
   }
 
   const data = docSnap.data();
-  // console.log('Current progress data:', data);
 
   const updated = supermemo(
     quality,
@@ -59,37 +57,28 @@ export async function updateUserCardProgress({
     data.interval
   );
 
-  console.log(`Card ${cardId} new nextReviewDate: ${updated.nextReviewDate.toLocaleString()}`);
-
   await updateDoc(docRef, {
     ...updated,
+    quality,
     lastReviewedDate: new Date(),
     nextReviewDate: new Date(Date.now() + updated.interval * 24 * 60 * 60 * 1000),
+    lastQuality: quality, 
   });
-
-  // console.log('Progress successfully updated.');
 }
 
-// --- RUN EXAMPLE AFTER USER SIGN-IN ---
 function runExampleWhenReady() {
   onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      // console.error('User is not signed in.');
-      return;
-    }
+    if (!user) return;
 
     const userId = user.uid;
-    // console.log('Current userId:', userId);
-
     const cards = await fetchCards();
 
     if (cards.length === 0) {
-      // console.error('No cards found');
+      console.error('No cards found');
       return;
     }
 
     const firstCard = cards[0];
-    // console.log('Updating progress for first card:', firstCard.id);
 
     await updateUserCardProgress({
       userId,

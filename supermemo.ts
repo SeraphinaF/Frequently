@@ -38,6 +38,7 @@ export function supermemo(
   return {
     easinessFactor: parseFloat(ef.toFixed(2)), // preserved but not updated
     repetitionCount: repetition,
+    quality: userQuality,
     interval,
     nextReviewDate,
     lastReviewedDate: now,

@@ -49,10 +49,11 @@ const Index = () => {
       <StatusBar style="light" />
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Welkom terug!</Text>
-         <Text style={styles.subTitle}>We gaan gewoon weer verder waar je gebleven was</Text>
+        <Text style={styles.subTitle}>We gaan gewoon weer verder waar je gebleven was</Text>
         <TextInput
           placeholder='E-mailadres'
           value={email}
+          placeholderTextColor="rgba(255, 255, 255, 0.6)"
           onChangeText={setEmail}
           style={styles.input}
           autoCapitalize="none"
@@ -60,6 +61,7 @@ const Index = () => {
         <TextInput
           placeholder='Wachtwoord'
           value={password}
+          placeholderTextColor="rgba(255, 255, 255, 0.6)"
           onChangeText={setPassword}
           style={styles.input}
           secureTextEntry

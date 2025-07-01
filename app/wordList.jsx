@@ -37,25 +37,24 @@ export default function WordListScreen() {
     const auth = getAuth();
     const user = auth.currentUser;
 
-    const getDifficultyLabel = (easiness) => {
-        if (easiness >= 2.5) return { label: 'Makkelijk', color: '#4CAF50' };
-        if (easiness >= 2.0) return { label: 'Gemiddeld', color: '#FFC107' };
-        return { label: 'Moeilijk', color: '#F44336' };
+    const getDifficultyLabel = (quality) => {
+        if (quality === 1) return { label: 'Makkelijk', color: '#4CAF50' };
+        if (quality === 2 || quality === 3) return { label: 'Gemiddeld', color: '#FFC107' };
+        if (quality === 4) return { label: 'Moeilijk', color: '#F44336' };
+        return null;
     };
 
     const fetchUserProgress = async (userId, cardIds) => {
-        console.log('📦 Fetching userCardProgress for:', userId);
         const progressData = {};
         const promises = cardIds.map(async (cardId) => {
             const docId = `${userId}_${cardId}`;
-            console.log('🔍 Checking progress doc:', docId);
             const progressDoc = await getDoc(doc(db, 'userCardProgress', docId));
             if (progressDoc.exists()) {
                 const data = progressDoc.data();
-                console.log(`✅ Found progress for ${cardId}:`, data.easinessFactor);
-                progressData[cardId] = data;
-            } else {
-                console.log(`🚫 No progress found for ${docId}`);
+                progressData[cardId] = {
+                    quality: data.quality ?? null,
+                    lastReviewedDate: data.lastReviewedDate ?? null,
+                };
             }
         });
         await Promise.all(promises);
@@ -69,12 +68,12 @@ export default function WordListScreen() {
 
         try {
             const cardRef = collection(db, 'cards');
-            let q = query(cardRef, orderBy('dutch_word'), limit(PAGE_SIZE));
+            let q = query(cardRef, orderBy('index_id'), limit(PAGE_SIZE));
 
             if (loadMore && lastVisible) {
                 q = query(
                     cardRef,
-                    orderBy('dutch_word'),
+                    orderBy('index_id'),
                     startAfter(lastVisible),
                     limit(PAGE_SIZE)
                 );
@@ -93,14 +92,14 @@ export default function WordListScreen() {
 
                 const mergedCards = newCards.map((card) => ({
                     ...card,
-                    easinessFactor: progressMap[card.card_id]?.easinessFactor ?? null,
+                    quality: progressMap[card.card_id]?.quality ?? null,
                     lastReviewedDate: progressMap[card.card_id]?.lastReviewedDate ?? null,
                 }));
 
                 mergedCards.forEach((card) =>
                     console.log(
-                        `🧠 ${card.dutch_word} [${card.card_id}] → easinessFactor:`,
-                        card.easinessFactor ?? 'geen data'
+                        `🧠 ${card.dutch_word} [${card.card_id}] → quality:`,
+                        card.quality ?? 'geen data'
                     )
                 );
 
@@ -120,15 +119,22 @@ export default function WordListScreen() {
 
     const renderItem = ({ item, index }) => {
         let difficulty = null;
-
-        if (item.lastReviewedDate === null && item.easinessFactor === 2.5) {
-            difficulty = { label: 'nieuw', color: '#888888' }; // gray
+    
+        if (item.quality !== null) {
+            difficulty = getDifficultyLabel(item.quality);
+        } else if (item.lastReviewedDate === null && item.easinessFactor === 2.5) {
+            difficulty = { label: 'nieuw', color: '#888888' }; // grijs
         } else if (item.easinessFactor !== null) {
             difficulty = getDifficultyLabel(item.easinessFactor);
         }
 
         return (
             <View style={styles.card}>
+                <View style={styles.circleWrapper}>
+                    <View style={styles.circle}>
+                        <Text style={styles.circleText}>{index + 1}</Text>
+                    </View>
+                </View>
                 {item.image_url ? (
                     <Image source={{ uri: item.image_url }} style={styles.image} />
                 ) : (
@@ -142,11 +148,6 @@ export default function WordListScreen() {
                             <Text style={styles.difficultyText}>{difficulty.label}</Text>
                         </View>
                     )}
-                </View>
-                <View style={styles.circleWrapper}>
-                    <View style={styles.circle}>
-                        <Text style={styles.circleText}>{index + 1}</Text>
-                    </View>
                 </View>
             </View>
         );
@@ -166,7 +167,7 @@ export default function WordListScreen() {
             <StatusBar style="dark" />
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backButton}>← Terug</Text>
+                    <Text style={styles.backButton}>←Terug</Text>
                 </TouchableOpacity>
                 <Text style={styles.title}>Woordenlijst</Text>
             </View>
@@ -174,7 +175,7 @@ export default function WordListScreen() {
             <FlatList
                 data={cards}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.card_id}
+                keyExtractor={(item, index) => `${item.card_id}_${index}`}
                 onEndReached={() => fetchCards(true)}
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={loadingMore && <ActivityIndicator />}
@@ -267,31 +268,31 @@ const styles = StyleSheet.create({
         width: 66,
         alignItems: 'center',
         paddingRight: 40,
-        position: 'relative',  // needed for absolute children
-      },
-      verticalLine: {
+        position: 'relative',
+    },
+    verticalLine: {
         position: 'absolute',
         top: 0,
         bottom: 0,
-        left: '50%',  // center horizontally relative to circleWrapper
+        left: '50%',
         width: 4,
         backgroundColor: colors.primary,
-        transform: [{ translateX: -2 }], // half the width to center the line
+        transform: [{ translateX: -2 }],
         zIndex: 0,
-      },
-      circle: {
-        width: 66,
-        height: 66,
+    },
+    circle: {
+        width: 30,
+        height: 30,
         borderRadius: 33,
         backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 1, // above the line
-        marginVertical: 8, // spacing between circles vertically
-      },    
+        zIndex: 1,
+        marginLeft: 20,
+    },
     circleText: {
         color: 'white',
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 'bold',
     },
 

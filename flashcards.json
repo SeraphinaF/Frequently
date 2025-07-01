@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "index_id": 1,
     "spanish_word": "La",
     "dutch_word": "De v.",
     "spanish_example": "La casa ser grande.",
@@ -9,7 +9,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/la.mp3?alt=media"
   },
   {
-    "id": 2,
+    "index_id": 2,
     "spanish_word": "Le",
     "dutch_word": "De m.",
     "spanish_example": "La casa ser grande.",
@@ -18,7 +18,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/le.mp3?alt=media"
   },
   {
-    "id": 3,
+    "index_id": 3,
     "spanish_word": "Qué",
     "dutch_word": "Wat",
     "spanish_example": "¿Qué querer hacer?",
@@ -27,7 +27,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/que.mp3?alt=media"
   },
   {
-    "id": 4,
+    "index_id": 4,
     "spanish_word": "Y",
     "dutch_word": "En",
     "spanish_example": "Juan y María estar aquí.",
@@ -36,7 +36,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/y.mp3?alt=media"
   },
   {
-    "id": 5,
+    "index_id": 5,
     "spanish_word": "A",
     "dutch_word": "Naar",
     "spanish_example": "Voy a la tienda ir.",
@@ -45,7 +45,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/a.mp3?alt=media"
   },
   {
-    "id": 6,
+    "index_id": 6,
     "spanish_word": "En",
     "dutch_word": "In, Op",
     "spanish_example": "Hay muchas plantas en la casa.",
@@ -54,7 +54,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/en.mp3?alt=media"
   },
   {
-    "id": 7,
+    "index_id": 7,
     "spanish_word": "Un",
     "dutch_word": "Een",
     "spanish_example": "Tengo un gato tener.",
@@ -63,7 +63,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/un.mp3?alt=media"
   },
   {
-    "id": 8,
+    "index_id": 8,
     "spanish_word": "Ser",
     "dutch_word": "Zijn",
     "spanish_example": "Ellos ser estudiantes.",
@@ -72,7 +72,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/ser.mp3?alt=media"
   },
   {
-    "id": 9,
+    "index_id": 9,
     "spanish_word": "No",
     "dutch_word": "Niet",
     "spanish_example": "No querer eso.",
@@ -81,7 +81,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/no.mp3?alt=media"
   },
   {
-    "id": 10,
+    "index_id": 10,
     "spanish_word": "Por",
     "dutch_word": "Door",
     "spanish_example": "Caminamos por el parque caminar.",
@@ -90,7 +90,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/por.mp3?alt=media"
   },
   {
-    "id": 11,
+    "index_id": 11,
     "spanish_word": "Con",
     "dutch_word": "Met",
     "spanish_example": "Voy al cine con mi amigo ir.",
@@ -99,7 +99,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/con.mp3?alt=media"
   },
   {
-    "id": 12,
+    "index_id": 12,
     "spanish_word": "Su",
     "dutch_word": "Zijn",
     "spanish_example": "Su coche ser rojo.",
@@ -108,7 +108,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/su.mp3?alt=media"
   },
   {
-    "id": 13,
+    "index_id": 13,
     "spanish_word": "Para",
     "dutch_word": "Voor",
     "spanish_example": "Este regalo ser para ti.",
@@ -117,7 +117,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/para.mp3?alt=media"
   },
   {
-    "id": 14,
+    "index_id": 14,
     "spanish_word": "Como",
     "dutch_word": "Hoe",
     "spanish_example": "¿Cómo estar?",
@@ -126,7 +126,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/como.mp3?alt=media"
   },
   {
-    "id": 15,
+    "index_id": 15,
     "spanish_word": "Estar",
     "dutch_word": "Zijn",
     "spanish_example": "Estamos cansados",
@@ -136,7 +136,7 @@
   },
 
   {
-    "id": 16,
+    "index_id": 16,
     "spanish_word": "Tener",
     "dutch_word": "Hebben",
     "spanish_example": "Es importante tener tiempo para estudiar.",
@@ -145,7 +145,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/tener.mp3?alt=media"
   },
   {
-    "id": 17,
+    "index_id": 17,
     "spanish_word": "Le",
     "dutch_word": "Hem",
     "spanish_example": "Le dar el libro.",
@@ -154,7 +154,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/le.mp3?alt=media"
   },
   {
-    "id": 18,
+    "index_id": 18,
     "spanish_word": "Todo",
     "dutch_word": "Alles",
     "spanish_example": "Todo está bien.",
@@ -163,7 +163,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/todo.mp3?alt=media"
   },
   {
-    "id": 19,
+    "index_id": 19,
     "spanish_word": "Pero",
     "dutch_word": "Maar",
     "spanish_example": "Quiero ir, pero estoy cansado.",
@@ -172,7 +172,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/pero.mp3?alt=media"
   },
   {
-    "id": 20,
+    "index_id": 20,
     "spanish_word": "Mas",
     "dutch_word": "Meer",
     "spanish_example": "Necesito mas tiempo.",
@@ -181,7 +181,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/mas.mp3?alt=media"
   },
   {
-    "id": 21,
+    "index_id": 21,
     "spanish_word": "Hacer",
     "dutch_word": "Doen",
     "spanish_example": "Voy a hacer mi tarea.",
@@ -190,7 +190,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/hacer.mp3?alt=media"
   },
   {
-    "id": 22,
+    "index_id": 22,
     "spanish_word": "O",
     "dutch_word": "Of",
     "spanish_example": "¿Café o té?",
@@ -199,7 +199,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/o.mp3?alt=media"
   },
   {
-    "id": 23,
+    "index_id": 23,
     "spanish_word": "Poder",
     "dutch_word": "Kunnen",
     "spanish_example": "Espero poder ayudarte pronto.",
@@ -208,7 +208,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/poder.mp3?alt=media"
   },
   {
-    "id": 24,
+    "index_id": 24,
     "spanish_word": "Decir",
     "dutch_word": "Zeggen",
     "spanish_example": "Voy a decir la verdad.",
@@ -217,7 +217,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/decir.mp3?alt=media"
   },
   {
-    "id": 25,
+    "index_id": 25,
     "spanish_word": "Ir",
     "dutch_word": "Gaan",
     "spanish_example": "Quiero ir al cine esta noche.",
@@ -226,7 +226,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/ir.mp3?alt=media"
   },
   {
-    "id": 26,
+    "index_id": 26,
     "spanish_word": "Otro",
     "dutch_word": "Ander",
     "spanish_example": "Quiero otro libro.",
@@ -235,7 +235,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/otro.mp3?alt=media"
   },
   {
-    "id": 27,
+    "index_id": 27,
     "spanish_word": "Ese",
     "dutch_word": "Die, Dat",
     "spanish_example": "Ese ser mi amigo.",
@@ -244,7 +244,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/ese.mp3?alt=media"
   },
   {
-    "id": 28,
+    "index_id": 28,
     "spanish_word": "Sí",
     "dutch_word": "Ja",
     "spanish_example": "Sí, querer eso.",
@@ -253,7 +253,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/si.mp3?alt=media"
   },
   {
-    "id": 29,
+    "index_id": 29,
     "spanish_word": "Me",
     "dutch_word": "Ik",
     "spanish_example": "Me gusta la pizza.",
@@ -262,7 +262,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/me.mp3?alt=media"
   },
   {
-    "id": 30,
+    "index_id": 30,
     "spanish_word": "Ya",
     "dutch_word": "Al",
     "spanish_example": "Ya terminar.",
@@ -271,7 +271,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/ya.mp3?alt=media"
   },
   {
-    "id": 31,
+    "index_id": 31,
     "spanish_word": "Ver",
     "dutch_word": "Zien",
     "spanish_example": "Voy a ver una película.",
@@ -280,7 +280,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/ver.mp3?alt=media"
   },
   { 
-    "id": 32,
+    "index_id": 32,
     "spanish_word": "Porque",
     "dutch_word": "Omdat",
     "spanish_example": "No salgo porque está lloviendo",
@@ -289,7 +289,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/porque.mp3?alt=media"
   },
   {
-    "id": 33,
+    "index_id": 33,
     "spanish_word": "Dar",
     "dutch_word": "Geven",
     "spanish_example": "Voy a dar un regalo.",
@@ -298,7 +298,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/dar.mp3?alt=media"
   },
   {
-    "id": 34,
+    "index_id": 34,
     "spanish_word": "Cuando",
     "dutch_word": "Wanneer",
     "spanish_example": "¿Cuándo venir?",
@@ -307,7 +307,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/cuando.mp3?alt=media"
   },
   {
-    "id": 35,
+    "index_id": 35,
     "spanish_word": "Él",
     "dutch_word": "Hij",
     "spanish_example": "Él es mi hermano.",
@@ -316,7 +316,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/él.mp3?alt=media"
   },
   {
-    "id": 36,
+    "index_id": 36,
     "spanish_word": "Muy",
     "dutch_word": "Erg",
     "spanish_example": "Estoy muy feliz.",
@@ -325,7 +325,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/muy.mp3?alt=media"
   },
   {
-    "id": 37,
+    "index_id": 37,
     "spanish_word": "Sin",
     "dutch_word": "Zonder",
     "spanish_example": "Voy a ir sin ti.",
@@ -334,7 +334,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/sin.mp3?alt=media"
   },
   {
-    "id": 38,
+    "index_id": 38,
     "spanish_word": "Vez",
     "dutch_word": "Keer",
     "spanish_example": "Es la primera vez que lo ver.",
@@ -343,7 +343,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/vez.mp3?alt=media"
   },
   {
-    "id": 39,
+    "index_id": 39,
     "spanish_word": "Mucho",
     "dutch_word": "Veel",
     "spanish_example": "Tengo mucho trabajo.",
@@ -352,7 +352,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/mucho.mp3?alt=media"
   },
   {
-    "id": 40,
+    "index_id": 40,
     "spanish_word": "Saber",
     "dutch_word": "Weet",
     "spanish_example": "Sé la respuesta saber.",
@@ -361,7 +361,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/saber.mp3?alt=media"
   },
   {
-    "id": 41,
+    "index_id": 41,
     "spanish_word": "Sobre",
     "dutch_word": "Over",
     "spanish_example": "El puente pasa sobre el río.",
@@ -370,7 +370,7 @@
      "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/sobre.mp3?alt=media"
   },
   {
-    "id": 42,
+    "index_id": 42,
     "spanish_word": "Mi",
     "dutch_word": "Mijn",
     "spanish_example": "Mi casa es pequeña.",
@@ -379,7 +379,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/mi.mp3?alt=media"
   },
   {
-    "id": 43,
+    "index_id": 43,
     "spanish_word": "Alguno",
     "dutch_word": "Een",
     "spanish_example": "¿Tener algún libro?",
@@ -388,7 +388,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/alguno.mp3?alt=media"
   },
   {
-    "id": 44,
+    "index_id": 44,
     "spanish_word": "Mismo",
     "dutch_word": "Zelfde",
     "spanish_example": "Es el mismo coche ser.",
@@ -397,7 +397,7 @@
     "spanish_audio_url": "https://firebasestorage.googleapis.com/v0/b/frequently-62242/o/mismo.mp3?alt=media"
   },
   {
-    "id": 45,
+    "index_id": 45,
     "spanish_word": "Lo",
     "dutch_word": "Het",
     "spanish_example": "Lo ver.",

@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const DonutChart = ({
   percentage = 75,
-  radius = 130,
+  radius = 120,
   strokeWidth = 25,
   color = "#F72585",
   textColor = "#0C1049",
@@ -56,18 +56,18 @@ const DonutChart = ({
       <Text
         style={{
           position: 'absolute',
-          fontSize: 58,
+          fontSize: 40,
           fontWeight: '700',
           color: textColor,
-          fontFamily: fontFamily,
+
         }}
       >
         {percentage}%
       </Text>
-      <Text 
-          style={{
+      <Text
+        style={{
           position: 'absolute',
-          marginTop:80,
+          marginTop: 80,
           fontSize: 18,
           fontWeight: '400',
           color: textColor,
@@ -76,7 +76,6 @@ const DonutChart = ({
     </View>
   );
 };
-
 
 const ProgressDonut = () => {
   const [percentage, setPercentage] = useState(0);
@@ -88,12 +87,12 @@ const ProgressDonut = () => {
       const cached = await AsyncStorage.getItem('@user_progress_percentage');
       if (cached !== null) setPercentage(parseInt(cached, 10));
     };
-  
+
     loadCachedPercentage();
-  
+
     const fetchProgress = async () => {
       if (!currentUser?.uid) return;
-  
+
       try {
         const userProgressQuery = query(
           collection(db, 'userCardProgress'),
@@ -101,29 +100,32 @@ const ProgressDonut = () => {
         );
         const snapshot = await getDocs(userProgressQuery);
         const cards = snapshot.docs.map(doc => doc.data());
+
         const totalCardsSnapshot = await getDocs(collection(db, 'cards'));
         const totalCards = totalCardsSnapshot.size;
-  
-        const reviewedCards = cards.filter(card => card.lastReviewedDate != null);
-  
-        if (reviewedCards.length === 0) {
-          setPercentage(0);
-          await AsyncStorage.setItem('@user_progress_percentage', '0');
-          return;
-        }
-  
-        const easyCards = reviewedCards.filter(card => card.easinessFactor >= 2.3);
-        const calculatedPercentage = Math.round((easyCards.length / totalCards) * 100);
-  
+
+        if (totalCards === 0) return;
+
+        // ✅ Only include cards with easinessFactor >= 2.4 AND lastQuality === 1
+        const qualifyingCards = cards.filter(
+          card =>
+            typeof card.easinessFactor === 'number' &&
+            typeof card.lastQuality === 'number' &&
+            card.easinessFactor >= 2.4 &&
+            card.lastQuality === 1
+        );
+
+        const calculatedPercentage = Math.round((qualifyingCards.length / totalCards) * 100);
+
         setPercentage(calculatedPercentage);
         await AsyncStorage.setItem('@user_progress_percentage', calculatedPercentage.toString());
       } catch (error) {
-        console.error("Error fetching user progress:", error);
+        console.error('Error fetching user progress:', error);
       }
     };
-  
+
     fetchProgress();
-  }, [currentUser]);  
+  }, [currentUser]);
 
   return <DonutChart percentage={percentage} />;
 };

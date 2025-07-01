@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 import { collection } from 'firebase/firestore';
 import { db } from '@/FirebaseConfig';
 import { colors } from '@/src/styles/colors';
@@ -12,8 +12,10 @@ import generateSessionCards from '@/generateSessionCards';
 import HorizontalLogo from '@/components/ui/HorizontalLogo';
 import { StatusBar } from 'expo-status-bar';
 import BaseLayout from '@/components/ui/BaseLayout';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Flashcard() {
+    const navigation = useNavigation();
     const [session, setSession] = useState(null);
     const [currentCard, setCurrentCard] = useState(null);
     const [isFlipped, setIsFlipped] = useState(false);
@@ -21,7 +23,6 @@ export default function Flashcard() {
     const auth = getAuth();
     const user = auth.currentUser;
 
-    // Track component mounted state to avoid setting state after unmount
     const mounted = useRef(true);
     useEffect(() => {
         return () => {
@@ -70,6 +71,19 @@ export default function Flashcard() {
         return () => clearInterval(intervalId);
     }, [session, currentCard]);
 
+    useEffect(() => {
+        if (session && session.getQueueLength() === 0) {
+            const timeout = setTimeout(() => {
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'homeScreen' }],
+                });;
+            }, 3000);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [session, currentCard]);
+
     const handleUserFeedback = (quality) => {
         if (!session || !currentCard) return;
 
@@ -93,26 +107,6 @@ export default function Flashcard() {
             </BaseLayout>
         );
     }
-
-    // if (session && session.getQueueLength() === 0) {
-    //     return (
-    //         <BaseLayout>
-    //             <SafeAreaView style={styles.completeScreen}>
-    //                 <StatusBar style="dark" />
-    //                 <HorizontalLogo width={300} height={120} />
-    //                 <Text style={styles.completeTitle}>Goed gedaan!</Text>
-    //                 <Text style={styles.completeText}>
-    //                     Je hebt deze sessie voltooid. Morgen staat er weer een nieuwe voor je klaar.
-    //                 </Text>
-    //                 <TouchableOpacity onPress={() => navigation.navigate('homeScreen')}>
-    //                     <Text style={{ color: colors.primary, fontSize: 16, marginTop: 24 }}>
-    //                         Terug naar home
-    //                     </Text>
-    //                 </TouchableOpacity>
-    //             </SafeAreaView>
-    //         </BaseLayout>
-    //     );
-    // }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -155,24 +149,5 @@ const styles = StyleSheet.create({
     logo: {
         position: 'absolute',
         top: 175,
-    },
-    completeScreen: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colors.white,
-        padding: 24,
-    },
-    completeTitle: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: colors.primary,
-        marginTop: 32,
-    },
-    completeText: {
-        fontSize: 18,
-        color: colors.tertiary,
-        marginTop: 12,
-        textAlign: 'center',
     },
 });

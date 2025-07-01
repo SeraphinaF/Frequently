@@ -186,7 +186,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     gap: 16,
-    // optional shadow
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
@@ -227,7 +226,7 @@ const styles = StyleSheet.create({
 
   outlineButton: {
     backgroundColor: 'transparent',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: colors.tertiary,
   },
   outlineButtonText: {

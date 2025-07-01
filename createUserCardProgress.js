@@ -3,10 +3,6 @@ import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from 'firebase
 import { useEffect, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 
-const firebaseConfig = {
-  // your config here
-};
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -34,6 +30,7 @@ export default function App() {
               easinessFactor: 2.5,
               repetitionCount: 0,
               interval: 0,
+              quality: 0,
               nextReviewDate: null,
               lastReviewedDate: null
             });
@@ -48,5 +45,5 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  return null; // or your UI
+  return null; 
 }

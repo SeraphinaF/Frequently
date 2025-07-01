@@ -41,6 +41,7 @@ const register = () => {
       const cardsSnapshot = await getDocs(collection(db, 'cards'));
       console.log(`Found ${cardsSnapshot.docs.length} cards to create progress for.`);
 
+      const quality = 0; 
       for (const cardDoc of cardsSnapshot.docs) {
         const cardId = cardDoc.id;
         const progressDocRef = doc(db, 'userCardProgress', `${user.uid}_${cardId}`);
@@ -50,6 +51,7 @@ const register = () => {
           easinessFactor: 2.5,
           repetitionCount: 0,
           interval: 0,
+          quality,
           nextReviewDate: null,
           lastReviewedDate: null,
         });
@@ -73,9 +75,29 @@ const register = () => {
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Hi, welkom bij Frequently!</Text>
         <Text style={styles.subTitle}>Laten we beginnen. Vul hieronder je gegevens in.</Text>
-        <TextInput placeholder='Naam' value={name} onChangeText={setName} style={styles.input} />
-        <TextInput placeholder='E-mailadres' value={email} onChangeText={setEmail} style={styles.input} autoCapitalize="none" />
-        <TextInput placeholder='Wachtwoord' value={password} onChangeText={setPassword} style={styles.input} secureTextEntry />
+        <TextInput
+          placeholder="Naam"
+          placeholderTextColor="rgba(255, 255, 255, 0.6)"
+          value={name}
+          onChangeText={setName}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="E-mailadres"
+          placeholderTextColor="rgba(255, 255, 255, 0.6)"
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Wachtwoord"
+          placeholderTextColor="rgba(255, 255, 255, 0.6)"
+          value={password}
+          onChangeText={setPassword}
+          style={styles.input}
+          secureTextEntry
+        />
         <TouchableOpacity onPress={signUp} style={[buttonStyles.buttonPrimary, styles.button]}>
           <Text style={[buttonStyles.textPrimary]}>Aanmelden</Text>
         </TouchableOpacity>
