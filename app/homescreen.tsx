@@ -2,15 +2,24 @@ import BaseLayout from '@/components/ui/BaseLayout';
 import { useNavigation } from "@react-navigation/native";
 import { db } from '@/FirebaseConfig';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View, Text, TouchableOpacity, SafeAreaView, Image } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Image
+} from 'react-native';
 import { doc, getDoc } from 'firebase/firestore';
 import { colors } from '@/src/styles/colors';
-import { buttonStyles } from '@/src/styles/buttons';
-import HorizontalLogo from '@/components/ui/HorizontalLogo';
 import DonutChart from '@/components/ui/DonutChart';
+import { StatusBar } from 'expo-status-bar';
+
+import logoutIcon from '../assets/images/logoutIcon.png';
+import playIcon from '../assets/images/playIcon.png';
+import listIcon from '../assets/images/listIcon.png';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -19,182 +28,209 @@ export default function HomeScreen() {
   const [userId, setUserId] = useState('');
 
   useEffect(() => {
-    const getUser = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserId(user.uid);
         await AsyncStorage.setItem("userId", user.uid);
       }
     });
-    return () => getUser();
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
     if (!userId) return;
-
-    const fetchUserName = async () => {
+    (async () => {
       try {
-        const userDocRef = doc(db, "users", userId);
-        const userDocSnap = await getDoc(userDocRef);
-
-        if (userDocSnap.exists()) {
-          const name = userDocSnap.data().name;
+        const snap = await getDoc(doc(db, "users", userId));
+        if (snap.exists()) {
+          const name = snap.data().name as string;
           setUserName(name);
           await AsyncStorage.setItem('userName', name);
-        } else {
-          console.log("User not found");
         }
-      } catch (error) {
-        console.error("Error fetching user:", error);
+      } catch (e) {
+        console.error("Error fetching user:", e);
       }
-    };
-
-    fetchUserName();
+    })();
   }, [userId]);
 
   return (
-    <BaseLayout>
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.logoutWrapper}>
-          <TouchableOpacity onPress={() => auth.signOut()}>
-            <Text style={styles.logoutText}>Uitloggen</Text>
-          </TouchableOpacity>
-        </View>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="dark" />
 
-        <View style={styles.mainContent}>
-          <View style={styles.startContent}>
-            <View>
-              <HorizontalLogo width={300} height={200} />
-            </View>
-          </View>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => auth.signOut()} style={styles.logoutWrapper}>
+          <Image source={logoutIcon} style={styles.logoutIcon} />
+          <Text style={styles.logoutText}>Uitloggen</Text>
+        </TouchableOpacity>
+      </View>
 
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <DonutChart
-              percentage={27}
-              radius={120}
-              strokeWidth={25}
-              color="#252B7A"
+      <View style={styles.greetingContainer}>
+        <Text style={styles.greeting}>
+          Welkom bij Frequently
+        </Text>
+      </View>
+
+      {/* Progress Card */}
+      <View style={styles.progressCard}>
+        <Text style={styles.progressTitle}>Jouw voortgang</Text>
+        <DonutChart
+          percentage={27}
+          radius={100}
+          strokeWidth={20}
+          color={colors.primary}
+        />
+      </View>
+
+      {/* Buttons Card */}
+      <View style={styles.buttonCard}>
+        {/* Primary Button */}
+        <TouchableOpacity
+          style={[styles.button, styles.primaryButton]}
+          onPress={() => navigation.navigate("flashCard")}
+        >
+          <View style={styles.buttonContent}>
+            <Image
+              source={playIcon}
+              style={[styles.icon, { tintColor: colors.white }]}
             />
+            <Text style={[styles.buttonText, styles.primaryButtonText]}>
+              Let's start!
+            </Text>
           </View>
-          <View style={styles.endContent}>
-        
-            <TouchableOpacity
-              onPress={() => navigation.navigate("flashCard")}
-              style={[styles.button, buttonStyles.buttonPrimary]}
-            >
-                <Text style={styles.buttonText}>Let's start!</Text>
-            </TouchableOpacity>
-   
-        </View>
+        </TouchableOpacity>
+
+        {/* Outline Button */}
+        <TouchableOpacity
+          style={[styles.button, styles.outlineButton]}
+          onPress={() => navigation.navigate("wordList")}
+        >
+          <View style={styles.buttonContent}>
+            <Image
+              source={listIcon}
+              style={[
+                styles.icon,
+                { tintColor: colors.tertiary, width: 18, height: 18 }
+              ]}
+            />
+            <Text style={[styles.buttonText, styles.outlineButtonText]}>
+              Woordenlijst
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
-    </BaseLayout >
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingHorizontal: 16,
-  },
-  logoutWrapper: {
-    alignItems: 'flex-end',
-    marginTop: 8,
-  },
-  logoutText: {
-    color: colors.white,
-  },
-  mainContent: {
-    flex: 1,
-  },
-  startContent: {
-    alignItems: 'center',
-  },
-  title: {
-    color: colors.black,
-    fontFamily: 'Nunito',
-    fontSize: 54,
-    textAlign: 'center',
-  },
-  subTitle: {
-    color: colors.black,
-    fontSize: 20,
-    textAlign: 'center',
-    fontWeight: '800',
-    fontFamily: 'Nunito',
-  },
-  welcomeContainer: {
     backgroundColor: colors.white,
-    padding: 16,
-    borderRadius: 15,
-    marginBottom: 16,
+  },
 
-  },
-  welcomeText: {
-    color: colors.black,
-    fontSize: 24,
-    fontFamily: 'Nunito',
-    fontWeight: '700',
-  },
-  userName: {
-    color: colors.primary,
-  },
-  welcomeStats: {
-    color: colors.black,
-    fontSize: 18,
-    fontWeight: '600',
-    fontFamily: 'Nunito',
-  },
-  statsContainer: {
-    backgroundColor: colors.white,
-    padding: 16,
-    borderRadius: 15,
-    marginBottom: 16,
-    gap: 8,
-
-  },
-  statsText: {
-    color: colors.black,
-    fontSize: 20,
-    fontWeight: '600',
-    fontFamily: 'Nunito',
-  },
-  statsNumber: {
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  spanishList: {
-    backgroundColor: colors.white,
-    padding: 16,
-    borderRadius: 15,
+  header: {
+    marginTop: 16,
+    marginHorizontal: 24,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  spanishListText: {
-    color: colors.black,
-    fontSize: 20,
-    fontWeight: '600',
-    fontFamily: 'Nunito',
-  },
-  languageIcon: {
-    width: 32,
-    height: 32,
-  },
-  endContent: {
+  greetingContainer: {
     alignItems: 'center',
+    marginTop: 24,
+  },
+  greeting: {
+    fontSize: 40,
+    fontWeight: '700',
+    color: colors.tertiary,
+    textAlign: 'center',
+  },
+  logoutWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoutIcon: {
+    width: 18,
+    height: 18,
+    marginRight: 6,
+    resizeMode: 'contain',
+  },
+  logoutText: {
+    fontSize: 16,
+    color: '#989898',
+  },
+
+  progressCard: {
+    backgroundColor: '#FFFFFF',
+    margin: 24,
+    padding: 32,
+    borderRadius: 20,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  progressTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.tertiary,
+    marginBottom: 12,
+  },
+
+  buttonCard: {
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: 24,
+    paddingVertical: 32,
+    borderRadius: 20,
+    alignItems: 'center',
+    gap: 16,
+    // optional shadow
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+
+
+  button: {
+    width: '80%',
+    paddingVertical: 16,
+    borderRadius: 15,
+    justifyContent: 'center',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center', 
+    paddingLeft: 0,            
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginRight: 12,
+    resizeMode: 'contain',
   },
   buttonText: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginRight: 8,
-    color: colors.tertiary,
+    fontSize: 20,
+    fontWeight: '500',
+    fontFamily: 'Nunito',
   },
-  button: {
-    padding: 16,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    display: 'flex',
-    flexDirection: 'row',
+
+  primaryButton: {
+    backgroundColor: colors.primary,
+  },
+  primaryButtonText: {
+    color: colors.white,
+  },
+
+  outlineButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: colors.tertiary,
+  },
+  outlineButtonText: {
+    color: colors.tertiary,
   },
 });

@@ -58,7 +58,8 @@ export async function updateUserCardProgress({
     data.repetitionCount,
     data.interval
   );
-  // console.log('Updated progress values:', updated);
+
+  console.log(`Card ${cardId} new nextReviewDate: ${updated.nextReviewDate.toLocaleString()}`);
 
   await updateDoc(docRef, {
     ...updated,

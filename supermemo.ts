@@ -5,42 +5,38 @@ export function supermemo(
   prevInterval: number
 ) {
   const now = new Date();
-  let interval: number;
+  let interval: number; // in days, for backwards compatibility
   let repetition = prevRepetition;
   let ef = prevEF;
 
-  const quality = (() => {
-    switch (userQuality) {
-      case 1: return 5;
-      case 2: return 4;
-      case 3: return 3;
-      case 4: return 1;
-      default: return 3; // fallback to neutral
-    }
-  })();
+  // Map your custom intervals (in minutes)
+  let intervalMs: number;
 
-  if (quality < 3) {
-    repetition = 0;
-    interval = 1;
-  } else {
-    if (repetition === 0) {
-      interval = 1;
-    } else if (repetition === 1) {
-      interval = 6;
-    } else {
-      interval = Math.round(prevInterval * ef);
-    }
-    repetition += 1;
+  switch (userQuality) {
+    case 4: // hardest → 1 minute
+      intervalMs = 1 * 60 * 1000;
+      repetition = 0;
+      break;
+    case 3: // medium → 5 minutes
+      intervalMs = 5 * 60 * 1000;
+      repetition = 0;
+      break;
+    case 2: // easy → 10 minutes
+      intervalMs = 10 * 60 * 1000;
+      repetition = 0;
+      break;
+    case 1: // easiest → +1 day per streak
+    default:
+      repetition += 1;
+      intervalMs = repetition * 24 * 60 * 60 * 1000; // 1 day, 2 days, etc.
+      break;
   }
 
-  ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-  if (ef < 1.3) ef = 1.3;
-
-  const nextReviewDate = new Date();
-  nextReviewDate.setTime(now.getTime() + interval * 24 * 60 * 60 * 1000);
+  const nextReviewDate = new Date(now.getTime() + intervalMs);
+  interval = intervalMs / (24 * 60 * 60 * 1000); // keep interval in days for compatibility
 
   return {
-    easinessFactor: parseFloat(ef.toFixed(2)),
+    easinessFactor: parseFloat(ef.toFixed(2)), // preserved but not updated
     repetitionCount: repetition,
     interval,
     nextReviewDate,

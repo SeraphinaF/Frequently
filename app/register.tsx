@@ -4,10 +4,11 @@ import { auth, db } from '@/FirebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
-import  BaseLayout  from '@/components/ui/BaseLayout';
+import BaseLayout from '@/components/ui/BaseLayout';
 import { buttonStyles } from '@/src/styles/buttons';
 import { colors } from '@/src/styles/colors';
 import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { StatusBar } from 'expo-status-bar';
 
 const register = () => {
   const [email, setEmail] = useState('');
@@ -28,18 +29,18 @@ const register = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
       const user = userCredential.user;
       console.log('User created with uid:', user.uid);
-  
+
       // Save the name and email in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         name: name,
         email: email.trim(),
       });
       console.log('User document created in Firestore for:', user.uid);
-  
+
       // Create initial progress documents for each card
       const cardsSnapshot = await getDocs(collection(db, 'cards'));
       console.log(`Found ${cardsSnapshot.docs.length} cards to create progress for.`);
-  
+
       for (const cardDoc of cardsSnapshot.docs) {
         const cardId = cardDoc.id;
         const progressDocRef = doc(db, 'userCardProgress', `${user.uid}_${cardId}`);
@@ -54,20 +55,21 @@ const register = () => {
         });
         console.log(`Progress document created for card ${cardId}`);
       }
-  
+
       console.log('All user progress documents created successfully.');
-  
+
       // Redirect to home screen
       router.replace('/homeScreen');
-  
+
     } catch (error: any) {
       console.log('Error during sign up:', error);
       alert('Registratie mislukt: ' + error.message);
     }
-  };  
+  };
 
   return (
     <BaseLayout>
+      <StatusBar style="light" />
       <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Hi, welkom bij Frequently!</Text>
         <Text style={styles.subTitle}>Laten we beginnen. Vul hieronder je gegevens in.</Text>
@@ -80,9 +82,9 @@ const register = () => {
         <View style={styles.textContainer}>
           <Text style={styles.text}>
             Heb je al een account?{' '}
-            <TouchableOpacity onPress={() => router.back()}>
-              <Text style={styles.link}>Inloggen</Text>
-            </TouchableOpacity>
+            <Link style={styles.link} href="#" onPress={() => router.back()}>
+              Inloggen
+            </Link>
           </Text>
         </View>
       </SafeAreaView>
@@ -100,13 +102,15 @@ const styles = StyleSheet.create({
   title: {
     color: colors.white,
     fontSize: 32,
-    marginBottom: 8,
+    fontWeight: '700',
+    fontFamily: 'nunito',
   },
   subTitle: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: '200',
     marginBottom: 8,
+    fontFamily: 'nunito',
   },
   input: {
     color: colors.white,
@@ -127,10 +131,10 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.white,
-    textAlign: 'center',
-    maxWidth: 209,
+    alignItems: 'center',
   },
   link: {
-    color: colors.secondary,
+    color: colors.primary,
+    fontWeight: '700',
   },
 });

@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.Frequently"
+      "bundleIdentifier": "com.anonymous.Frequently",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app uses audio for playback."
+      }
     },
     "android": {
       "adaptiveIcon": {

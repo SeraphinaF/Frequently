@@ -6,17 +6,24 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Audio } from 'expo-av';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    // Raleway: require('../assets/fonts/Raleway-VariableFont_wght.ttf'),
     Nunito: require('../assets/fonts/Nunito-VariableFont_wght.ttf'),
-    // Nunito: require('../assets/fonts/NunitoSans-VariableFont_wght.ttf')
   });
+
+  useEffect(() => {
+    Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: false,
+      playsInSilentModeIOS: true,  
+      shouldDuckAndroid: false,
+    });
+  }, []);
 
   useEffect(() => {
     if (loaded) {
@@ -28,6 +35,7 @@ export default function RootLayout() {
     return null;
   }
 
+
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>  {/* 🔹 Add this line */}
@@ -37,6 +45,7 @@ export default function RootLayout() {
         <Stack.Screen name="flashCard" />
         <Stack.Screen name="backCard" />
         <Stack.Screen name="homeScreen" />
+        <Stack.Screen name="wordList" />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

@@ -13,7 +13,8 @@ const DonutChart = ({
   radius = 130,
   strokeWidth = 25,
   color = "#F72585",
-  textColor = "#FFFBF1"
+  textColor = "#0C1049",
+  fontFamily = "Nunito",
 }) => {
   const normalizedRadius = radius - strokeWidth / 2;
   const circumference = 2 * Math.PI * normalizedRadius;
@@ -32,7 +33,7 @@ const DonutChart = ({
       <Svg width={radius * 2} height={radius * 2}>
         <G rotation="-90" origin={`${radius}, ${radius}`}>
           <Circle
-            stroke="#eee"
+            stroke="rgba(0, 0, 0, 0.1)"
             cx={radius}
             cy={radius}
             r={normalizedRadius}
@@ -47,7 +48,7 @@ const DonutChart = ({
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
+            // strokeLinecap="round"
             fill="none"
           />
         </G>
@@ -55,13 +56,23 @@ const DonutChart = ({
       <Text
         style={{
           position: 'absolute',
-          fontSize: 64,
-          fontWeight: '500',
+          fontSize: 58,
+          fontWeight: '700',
           color: textColor,
+          fontFamily: fontFamily,
         }}
       >
         {percentage}%
       </Text>
+      <Text 
+          style={{
+          position: 'absolute',
+          marginTop:80,
+          fontSize: 18,
+          fontWeight: '400',
+          color: textColor,
+          fontFamily: fontFamily,
+        }}>Compleet</Text>
     </View>
   );
 };

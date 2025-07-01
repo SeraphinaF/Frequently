@@ -3,7 +3,6 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '@/src/styles/colors';
 import SoundIcon from './ui/SoundIcon';
 import { Audio } from 'expo-av';
-import { Sound } from 'expo-av/build/Audio';
 import FeedbackButtons from './FeedbackButtons';
 
 interface CardBackProps {
@@ -12,9 +11,9 @@ interface CardBackProps {
     handleUserFeedback: (level: 1 | 2 | 3 | 4) => void;
 }
 
-export default function CardBack({ card, isFlipped, nextCard, handleUserFeedback }: CardBackProps) {
+export default function CardBack({ card, isFlipped, handleUserFeedback }: CardBackProps) {
     const [imageLoaded, setImageLoaded] = useState(false);
-    const [sound, setSound] = useState();
+    const [sound, setSound] = useState<Audio.Sound | undefined>(undefined);
 
     async function playSound() {
         try {
@@ -23,7 +22,7 @@ export default function CardBack({ card, isFlipped, nextCard, handleUserFeedback
                 setSound(undefined);
             }
             const { sound: newSound } = await Audio.Sound.createAsync(
-                { uri: card.dutch_audio_url },
+                { uri: card.spanish_audio_url },
                 { shouldPlay: true }
             );
             setSound(newSound);
@@ -44,6 +43,27 @@ export default function CardBack({ card, isFlipped, nextCard, handleUserFeedback
             playSound();
         }
     }, [isFlipped, imageLoaded]);
+
+    const renderHighlightedExample = () => {
+        const word = card.spanish_word.trim();
+        const example = card.spanish_example;
+        const regex = new RegExp(`(${word})`, 'i');
+        const parts = example.split(regex);
+
+        return (
+            <Text style={styles.exampleForeign}>
+                {parts.map((part: string, index: number) =>
+                    part.toLowerCase() === word.toLowerCase() ? (
+                        <Text key={index} style={styles.boldWord}>
+                            {part}
+                        </Text>
+                    ) : (
+                        <Text key={index}>{part}</Text>
+                    )
+                )}
+            </Text>
+        );
+    };
 
     return (
         <View
@@ -67,15 +87,17 @@ export default function CardBack({ card, isFlipped, nextCard, handleUserFeedback
                             <SoundIcon width={20} height={20} />
                         </TouchableOpacity>
                     </View>
-                    <Text style={styles.exampleForeign}>{card.spanish_example}</Text>
+                    {renderHighlightedExample()}
                     <Text style={styles.exampleNative}>{card.dutch_example}</Text>
                     <View style={styles.feedbackContainer}>
                         <FeedbackButtons
                             cardId={card.id}
                             onFeedbackComplete={() => { }}
-                            handleUserFeedback={(quality) => handleUserFeedback(quality as 1 | 2 | 3 | 4)} nextCard={function (): void {
+                            handleUserFeedback={(quality) => handleUserFeedback(quality)}
+                            nextCard={() => {
                                 throw new Error('Function not implemented.');
-                            }} />
+                            }}
+                        />
                     </View>
                 </>
             )}
@@ -99,7 +121,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    soundIcon:{
+    soundIcon: {
         paddingBottom: 24,
         paddingLeft: 4,
     },
@@ -113,15 +135,21 @@ const styles = StyleSheet.create({
     },
     exampleForeign: {
         color: colors.tertiary,
-        fontSize: 18,
-        fontWeight: '500',
+        fontSize: 20,
+        fontWeight: '300',
         marginBottom: 8,
         textAlign: 'center',
+        fontStyle: 'italic',
+    },
+    boldWord: {
+        fontWeight: '600',
+        fontStyle: 'italic',
+        color: colors.tertiary,
     },
     exampleNative: {
         color: colors.tertiary,
-        fontSize: 18,
-        fontWeight: '300',
+        fontSize: 20,
+        fontWeight: '200',
         fontStyle: 'italic',
         textAlign: 'center',
     },

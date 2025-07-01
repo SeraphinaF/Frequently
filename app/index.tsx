@@ -3,9 +3,10 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-nativ
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
-import  BaseLayout  from '@/components/ui/BaseLayout';
+import BaseLayout from '@/components/ui/BaseLayout';
 import { buttonStyles } from '@/src/styles/buttons';
 import { colors } from '@/src/styles/colors';
+import { StatusBar } from 'expo-status-bar';
 
 
 const auth = getAuth();
@@ -26,7 +27,7 @@ const Index = () => {
   }, []);
 
   const signIn = async () => {
-    if (!email.includes('@') || !email.includes('.')) {  
+    if (!email.includes('@') || !email.includes('.')) {
       alert('Voer een geldig e-mailadres in.');
       return;
     }
@@ -45,20 +46,23 @@ const Index = () => {
 
   return (
     <BaseLayout>
+      <StatusBar style="light" />
       <SafeAreaView style={styles.container}>
-        <TextInput 
-          placeholder='E-mailadres' 
-          value={email} 
-          onChangeText={setEmail} 
-          style={styles.input} 
+        <Text style={styles.title}>Welkom terug!</Text>
+         <Text style={styles.subTitle}>We gaan gewoon weer verder waar je gebleven was</Text>
+        <TextInput
+          placeholder='E-mailadres'
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
           autoCapitalize="none"
         />
-        <TextInput 
-          placeholder='Wachtwoord' 
-          value={password} 
-          onChangeText={setPassword} 
-          style={styles.input} 
-          secureTextEntry 
+        <TextInput
+          placeholder='Wachtwoord'
+          value={password}
+          onChangeText={setPassword}
+          style={styles.input}
+          secureTextEntry
         />
         <TouchableOpacity onPress={signIn} style={[buttonStyles.buttonPrimary, styles.button]}>
           <Text style={[buttonStyles.textPrimary]}>Login</Text>
@@ -79,6 +83,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+  },
+  title: {
+    color: colors.white,
+    fontSize: 32,
+    fontWeight: '700',
+    fontFamily: 'nunito',
+  },
+  subTitle: {
+    color: colors.white,
+    fontSize: 22,
+    fontWeight: '200',
+    marginBottom: 8,
+    fontFamily: 'nunito',
   },
   input: {
     color: colors.white,
@@ -103,6 +120,7 @@ const styles = StyleSheet.create({
     maxWidth: 209,
   },
   link: {
-    color: colors.secondary,
+    color: colors.primary,
+    fontWeight: '700',
   },
 });
